@@ -2,7 +2,7 @@
 import { test } from '../fixtures/auto.test'
 
 test('convert excel data to json', async ({ kite }) => {
-  const data = await kite.readDataFromXLSX('./data/order.xlsx')
+  const data = await kite.readDataFromXLSX('./data/trade-data-ui.xlsx')
 
   const parsedData = data.map((item) => ({
     stock: item.stock,

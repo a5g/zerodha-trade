@@ -1,5 +1,5 @@
 import { test } from '../fixtures/auto.test'
-import orders from '../data/order.api'
+import orders from '../data/trade-data-api'
 import { utils } from '../utils/utils'
 
 const fs = require('fs')

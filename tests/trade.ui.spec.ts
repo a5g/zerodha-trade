@@ -1,5 +1,5 @@
 import { test } from '../fixtures/auto.test'
-import orders from '../data/order'
+import orders from '../data/trade-data-ui'
 import config from '../config'
 
 const ACTIVE_USER = 1
