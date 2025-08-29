@@ -6,17 +6,17 @@ const fs = require('fs')
 const XLSX = require('xlsx')
 
 export class Utils {
-  public kiteuser() {
-    return config.users.filter((u) => u.name === config.kcuser)[0]
+  public kiteuser(id: number = config.kcid) {
+    return config.users.filter((u) => u.id === id)[0]
   }
 
   public getUserObjectById(id: number = config.kcid) {
     return config.users.filter((x) => x.id === id)[0]
   }
 
-  public getUserObjectByName(name: string = config.kcname) {
-    return config.users.filter((u) => u.name === name)[0]
-  }
+  // public getUserObjectByName(name: string = config.kcname) {
+  //   return config.users.filter((u) => u.name === name)[0]
+  // }
 
   public indNumber(value: number) {
     return value.toLocaleString('en-IN')

@@ -93,7 +93,7 @@ export class API {
   }
 
   public async put(options: any, { apiToFail = false, schema = {} } = {}) {
-    this.printcURL(options)
+    // this.printcURL(options)
 
     const start = new Date().getTime()
     const response = await this.request.put(options.url, {
@@ -105,7 +105,7 @@ export class API {
   }
 
   public async delete(options: any, { apiToFail = false, schema = {} } = {}) {
-    this.printcURL(options)
+    // this.printcURL(options)
 
     const start = new Date().getTime()
     const response = await this.request.delete(options.url, {

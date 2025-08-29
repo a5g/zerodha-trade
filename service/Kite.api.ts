@@ -3,7 +3,7 @@ import qs from 'qs'
 
 import { API } from './index'
 import config from '../config'
-// import { utils } from '../utils/utils'
+import { utils } from '../utils/utils'
 // const qs = require('qs')
 
 const cookies = require('../.auth/cookies.json')
@@ -83,19 +83,161 @@ export class KiteAPI extends API {
     return super.post(request)
   }
 
-  public async placeRegularOrder(order: any) {
-    const data = this.getGTTOrderData(order)
+  // public async placeRegularOrder(order: any) {
+  //   const data = this.getGTTOrderData(order)
+  //   const request: any = {
+  //     url: `${config.apiHost}/oms/orders/regular`,
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/x-www-form-urlencoded',
+  //       Authorization: `enctoken ${cookies[order.user]}`,
+  //     },
+  //     data,
+  //   }
+
+  //   return super.post(request)
+  // }
+
+  public async placeRONudge(payload: any) {
+    // const data = this.getGTTOrderData(order)
+    const request: any = {
+      url: `${config.apiHost}/oms/nudge/orders`,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `enctoken ${cookies.anand}`,
+      },
+      data: payload,
+    }
+
+    return super.post(request)
+  }
+
+  // public getOrderPayload() {
+  //   const data = qs.stringify({
+  //     variety: 'regular',
+  //     exchange: 'NSE',
+  //     tradingsymbol: 'TCS',
+  //     transaction_type: 'BUY',
+  //     order_type: 'LIMIT',
+  //     quantity: 3,
+  //     price: 2800,
+  //     product: 'CNC',
+  //     validity: 'DAY',
+  //     disclosed_quantity: 0,
+  //     trigger_price: 0,
+  //     squareoff: 0,
+  //     stoploss: 0,
+  //     trailing_stoploss: 0,
+  //     // user_id: 'XQW072',
+  //   })
+
+  //   return data
+  // }
+
+  // {
+  //     exchange: 'NSE',
+  //     tradingsymbol: 'TCS',
+  //     transaction_type: 'BUY',
+  //     order_type: 'LIMIT',
+  //     quantity: 5,
+  //     price: 2875,
+  //   }
+
+  public async placeRegularOrder(payload: any) {
+    const data = qs.stringify({
+      variety: 'regular',
+      exchange: payload.exchange,
+      tradingsymbol: payload.tradingsymbol,
+      transaction_type: payload.transaction_type,
+      order_type: payload.order_type,
+      quantity: payload.quantity,
+      price: payload.price,
+      product: 'CNC',
+      validity: 'DAY',
+      disclosed_quantity: 0,
+      trigger_price: 0,
+      squareoff: 0,
+      stoploss: 0,
+      trailing_stoploss: 0,
+      user_id: utils.kiteuser().username,
+    })
+
     const request: any = {
       url: `${config.apiHost}/oms/orders/regular`,
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        Authorization: `enctoken ${cookies[order.user]}`,
+        Authorization: `enctoken ${cookies[utils.kiteuser().id]}`,
       },
       data,
     }
 
     return super.post(request)
+  }
+
+  public async placeAMOOrder(payload: any) {
+    const data = qs.stringify({
+      variety: 'regular',
+      exchange: payload.exchange,
+      tradingsymbol: payload.tradingsymbol,
+      transaction_type: payload.transaction_type,
+      order_type: payload.order_type,
+      quantity: payload.quantity,
+      price: payload.price,
+      product: 'CNC',
+      validity: 'DAY',
+      disclosed_quantity: 0,
+      trigger_price: 0,
+      squareoff: 0,
+      stoploss: 0,
+      trailing_stoploss: 0,
+      user_id: utils.kiteuser().username,
+      tag: 'switch_to_amo',
+    })
+
+    const request: any = {
+      url: `${config.apiHost}/oms/orders/amo`,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization: `enctoken ${cookies[utils.kiteuser().id]}`,
+      },
+      data,
+    }
+
+    return super.post(request)
+  }
+
+  public async getOpenOrders() {
+    const request: any = {
+      url: `${config.apiHost}/oms/orders`,
+      method: 'GET',
+      headers: {
+        Authorization: `enctoken ${cookies[utils.kiteuser().id]}`,
+      },
+    }
+
+    const orders: any = await super.get(request)
+
+    return orders.data.data.filter(
+      (order) => order.status === 'AMO REQ RECEIVED',
+    )
+
+    // return super.get(request)
+  }
+
+  public async cancelOrder(id: number) {
+    // https://kite.zerodha.com/oms/orders/regular/250829150368539?order_id=250829150368539&parent_order_id=&variety=regular
+    const request: any = {
+      url: `${config.apiHost}/oms/orders/amo/${id}?order_id=${id}&parent_order_id=&variety=regular`,
+      method: 'DELETE',
+      headers: {
+        Authorization: `enctoken ${cookies[utils.kiteuser().id]}`,
+      },
+    }
+
+    return super.delete(request)
   }
 }
 
