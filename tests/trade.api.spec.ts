@@ -67,7 +67,7 @@ function printRow(row: any, index) {
   return rowInfo
 }
 
-test('Delete summart.txt content', () => {
+test('Delete summary.txt content', () => {
   fs.writeFile(filePath, headerInfo().join(`\n`), 'utf8', (err) => {
     if (err) {
       console.error('Error writing file:', err)

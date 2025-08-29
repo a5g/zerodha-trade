@@ -209,7 +209,7 @@ export class KiteAPI extends API {
     return super.post(request)
   }
 
-  public async getOpenOrders() {
+  public async getRegularOpenOrders(tradingSymbol: string = '') {
     const request: any = {
       url: `${config.apiHost}/oms/orders`,
       method: 'GET',
@@ -220,15 +220,53 @@ export class KiteAPI extends API {
 
     const orders: any = await super.get(request)
 
+    if (tradingSymbol !== '') {
+      return orders.data.data.filter(
+        (order) =>
+          order.status === 'OPEN' && order.tradingsymbol === tradingSymbol,
+      )
+    }
+
+    return orders.data.data.filter((order) => order.status === 'OPEN')
+  }
+
+  public async getAMOOpenOrders(tradingSymbol: string = '') {
+    const request: any = {
+      url: `${config.apiHost}/oms/orders`,
+      method: 'GET',
+      headers: {
+        Authorization: `enctoken ${cookies[utils.kiteuser().id]}`,
+      },
+    }
+
+    const orders: any = await super.get(request)
+
+    if (tradingSymbol !== '') {
+      return orders.data.data.filter(
+        (order) =>
+          order.status === 'AMO REQ RECEIVED' &&
+          order.tradingsymbol === tradingSymbol,
+      )
+    }
+
     return orders.data.data.filter(
       (order) => order.status === 'AMO REQ RECEIVED',
     )
-
-    // return super.get(request)
   }
 
-  public async cancelOrder(id: number) {
-    // https://kite.zerodha.com/oms/orders/regular/250829150368539?order_id=250829150368539&parent_order_id=&variety=regular
+  public async cancelRegularOrder(id: number) {
+    const request: any = {
+      url: `${config.apiHost}/oms/orders/regular/${id}?order_id=${id}&parent_order_id=&variety=regular`,
+      method: 'DELETE',
+      headers: {
+        Authorization: `enctoken ${cookies[utils.kiteuser().id]}`,
+      },
+    }
+
+    return super.delete(request)
+  }
+
+  public async cancelAMOOrder(id: number) {
     const request: any = {
       url: `${config.apiHost}/oms/orders/amo/${id}?order_id=${id}&parent_order_id=&variety=regular`,
       method: 'DELETE',

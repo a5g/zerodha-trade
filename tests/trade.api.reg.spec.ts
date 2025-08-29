@@ -10,7 +10,7 @@ let counter = -1
 const placedOrder = []
 
 test.describe(`Regular Order`, () => {
-  test.skip(`Regular order test`, async ({ kiteAPI }) => {
+  test(`Regular order test`, async ({ kiteAPI }) => {
     // buy
     const payload = {
       exchange: 'NSE',
@@ -21,14 +21,15 @@ test.describe(`Regular Order`, () => {
       price: 2800,
     }
 
-    await kiteAPI.placeAMOOrder(payload)
+    const amo = await kiteAPI.getAMOOpenOrders('TCS')
+    console.log(amo)
   })
 
-  test('Cancel all open orders', async ({ kiteAPI }) => {
-    const openOrders = await kiteAPI.getOpenOrders()
+  test.skip('Cancel all open orders', async ({ kiteAPI }) => {
+    const openOrders = await kiteAPI.getRegularOpenOrders()
 
     for (const order of openOrders) {
-      await kiteAPI.cancelOrder(order.order_id)
+      await kiteAPI.cancelRegularOrder(order.order_id)
     }
 
     // console.log(openOrders.length)
