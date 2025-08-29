@@ -1,0 +1,11 @@
+node_modules/
+.auth/
+config.ts
+summary.txt
+screenshots/
+/test-results/
+/playwright-report/
+/playwright/.cache/
+/tmp/
+/data/tmp/
+.DS_Store
