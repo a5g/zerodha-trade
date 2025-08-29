@@ -4,9 +4,9 @@ import config from '../config'
 
 const XLSX = require('xlsx')
 const fs = require('fs')
+const file = require('../.auth/cookies.json')
 
 const fileName = '../.auth/cookies.json'
-const file = require(fileName)
 // const csv = require('csv-parser')
 
 export default class KitePage {
@@ -149,11 +149,8 @@ export default class KitePage {
       JSON.stringify(file),
       function writeJSON(err) {
         if (err) return console.log(err)
-        console.log(JSON.stringify(file))
-        console.log(`writing to .auth/cookies.json`)
       },
     )
-    // console.log(cookies)
   }
 
   public async gotoKite(path: string = '/') {

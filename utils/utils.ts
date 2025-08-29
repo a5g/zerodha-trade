@@ -10,6 +10,14 @@ export class Utils {
     return config.users.filter((u) => u.name === config.kcuser)[0]
   }
 
+  public getUserObjectById(id: number = config.kcid) {
+    return config.users.filter((x) => x.id === id)[0]
+  }
+
+  public getUserObjectByName(name: string = config.kcname) {
+    return config.users.filter((u) => u.name === name)[0]
+  }
+
   public indNumber(value: number) {
     return value.toLocaleString('en-IN')
   }
