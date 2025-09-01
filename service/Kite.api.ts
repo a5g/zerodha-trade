@@ -43,7 +43,9 @@ export class KiteAPI extends API {
     const triggerPrice =
       order.transactionType === 'BUY' ? order.buyPrice : order.sellPrice
     const price =
-      order.transactionType === 'BUY' ? order.buyPrice : order.sellPrice
+      order.transactionType === 'BUY'
+        ? order.buyPrice * 1.005
+        : order.sellPrice * 0.995
 
     const data = qs.stringify({
       condition: `{"exchange":"${order.exchange}","tradingsymbol":"${order.tradingSymbol}","trigger_values":[${triggerPrice}],"last_price":${order.lastPrice}}`,
@@ -82,67 +84,6 @@ export class KiteAPI extends API {
 
     return super.post(request)
   }
-
-  // public async placeRegularOrder(order: any) {
-  //   const data = this.getGTTOrderData(order)
-  //   const request: any = {
-  //     url: `${config.apiHost}/oms/orders/regular`,
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/x-www-form-urlencoded',
-  //       Authorization: `enctoken ${cookies[utils.kiteuser().id]}`,
-  //     },
-  //     data,
-  //   }
-
-  //   return super.post(request)
-  // }
-
-  // public async placeRONudge(payload: any) {
-  //   // const data = this.getGTTOrderData(order)
-  //   const request: any = {
-  //     url: `${config.apiHost}/oms/nudge/orders`,
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //       Authorization: `enctoken ${cookies[utils.kiteuser().id]}`,
-  //     },
-  //     data: payload,
-  //   }
-
-  //   return super.post(request)
-  // }
-
-  // public getOrderPayload() {
-  //   const data = qs.stringify({
-  //     variety: 'regular',
-  //     exchange: 'NSE',
-  //     tradingsymbol: 'TCS',
-  //     transaction_type: 'BUY',
-  //     order_type: 'LIMIT',
-  //     quantity: 3,
-  //     price: 2800,
-  //     product: 'CNC',
-  //     validity: 'DAY',
-  //     disclosed_quantity: 0,
-  //     trigger_price: 0,
-  //     squareoff: 0,
-  //     stoploss: 0,
-  //     trailing_stoploss: 0,
-  //     // user_id: 'XQW072',
-  //   })
-
-  //   return data
-  // }
-
-  // {
-  //     exchange: 'NSE',
-  //     tradingsymbol: 'TCS',
-  //     transaction_type: 'BUY',
-  //     order_type: 'LIMIT',
-  //     quantity: 5,
-  //     price: 2875,
-  //   }
 
   public async placeRegularOrder(payload: any) {
     const data = qs.stringify({
@@ -312,6 +253,3 @@ export class KiteAPI extends API {
     return super.delete(request)
   }
 }
-
-// Google sheet link
-// https://docs.google.com/spreadsheets/d/1ZOxBZE8JgM0tgAhxrtuwGbja1kN5Yx-_JejVzOqIrcs/edit?usp=sharing

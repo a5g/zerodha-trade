@@ -6,6 +6,7 @@
   "scripts": {
     "clean": "rm -rf screenshots/",
     "json": "npx playwright test tests/json.spec.ts",
+    "pull-data": "npx playwright test tests/pull.data.spec.ts",
     "login": "npx playwright test tests/login.all.spec.ts",
     "navigate": "npx playwright test tests/navigate/*.spec.ts --ui -g navigate",
     "gtt": "npm run pull-data && npx playwright test tests/trade.gtt.api.spec.ts -g gtt_order",

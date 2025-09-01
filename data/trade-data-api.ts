@@ -1,13 +1,13 @@
 export default [
   {
     "exchange": "NSE",
-    "tradingSymbol": "IXIGO",
-    "ltp": 296,
-    "qty": 421,
-    "buyPrice": 296.7,
-    "sellPrice": 0,
-    "profitPercent": 0,
+    "tradingSymbol": "MANAPPURAM",
+    "ltp": 275,
+    "qty": 5,
+    "buyPrice": 280,
+    "sellPrice": 270,
+    "profitPercent": -3.57,
     "tradeRisk": 0.75,
-    "positionSize": 0
+    "positionSize": 21
   }
 ]
