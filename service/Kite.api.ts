@@ -61,7 +61,7 @@ export class KiteAPI extends API {
       method: 'GET',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        Authorization: `enctoken ${cookies.anand}`,
+        Authorization: `enctoken ${cookies[utils.kiteuser().id]}`,
       },
     }
 
@@ -75,7 +75,7 @@ export class KiteAPI extends API {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        Authorization: `enctoken ${cookies[order.user]}`,
+        Authorization: `enctoken ${cookies[utils.kiteuser().id]}`,
       },
       data,
     }
@@ -90,7 +90,7 @@ export class KiteAPI extends API {
   //     method: 'POST',
   //     headers: {
   //       'Content-Type': 'application/x-www-form-urlencoded',
-  //       Authorization: `enctoken ${cookies[order.user]}`,
+  //       Authorization: `enctoken ${cookies[utils.kiteuser().id]}`,
   //     },
   //     data,
   //   }
@@ -98,20 +98,20 @@ export class KiteAPI extends API {
   //   return super.post(request)
   // }
 
-  public async placeRONudge(payload: any) {
-    // const data = this.getGTTOrderData(order)
-    const request: any = {
-      url: `${config.apiHost}/oms/nudge/orders`,
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `enctoken ${cookies.anand}`,
-      },
-      data: payload,
-    }
+  // public async placeRONudge(payload: any) {
+  //   // const data = this.getGTTOrderData(order)
+  //   const request: any = {
+  //     url: `${config.apiHost}/oms/nudge/orders`,
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //       Authorization: `enctoken ${cookies[utils.kiteuser().id]}`,
+  //     },
+  //     data: payload,
+  //   }
 
-    return super.post(request)
-  }
+  //   return super.post(request)
+  // }
 
   // public getOrderPayload() {
   //   const data = qs.stringify({
@@ -149,7 +149,7 @@ export class KiteAPI extends API {
       variety: 'regular',
       exchange: payload.exchange,
       tradingsymbol: payload.tradingsymbol,
-      transaction_type: payload.transaction_type,
+      transaction_type: 'LIMIT',
       order_type: payload.order_type,
       quantity: payload.quantity,
       price: payload.price,
@@ -160,7 +160,7 @@ export class KiteAPI extends API {
       squareoff: 0,
       stoploss: 0,
       trailing_stoploss: 0,
-      user_id: utils.kiteuser().username,
+      user_id: utils.kiteuser().kiteid,
     })
 
     const request: any = {
@@ -176,7 +176,7 @@ export class KiteAPI extends API {
     return super.post(request)
   }
 
-  public async placeAMOOrder(payload: any) {
+  public async placeAMO(payload: any) {
     const data = qs.stringify({
       variety: 'regular',
       exchange: payload.exchange,
@@ -192,7 +192,7 @@ export class KiteAPI extends API {
       squareoff: 0,
       stoploss: 0,
       trailing_stoploss: 0,
-      user_id: utils.kiteuser().username,
+      user_id: utils.kiteuser().kiteid,
       tag: 'switch_to_amo',
     })
 
@@ -252,6 +252,40 @@ export class KiteAPI extends API {
     return orders.data.data.filter(
       (order) => order.status === 'AMO REQ RECEIVED',
     )
+  }
+
+  public async getGTTActiveOrders(tradingSymbol: string = '') {
+    const request: any = {
+      url: `${config.apiHost}/oms/gtt/triggers`,
+      method: 'GET',
+      headers: {
+        Authorization: `enctoken ${cookies[utils.kiteuser().id]}`,
+      },
+    }
+
+    const orders: any = await super.get(request)
+
+    if (tradingSymbol !== '') {
+      return orders.data.data.filter(
+        (order) =>
+          order.status === 'active' &&
+          order.condition.tradingsymbol === tradingSymbol,
+      )
+    }
+
+    return orders.data.data.filter((order) => order.status === 'active')
+  }
+
+  public async cancelGTTOrder(id: number) {
+    const request: any = {
+      url: `${config.apiHost}/oms/gtt/triggers/${id}`,
+      method: 'DELETE',
+      headers: {
+        Authorization: `enctoken ${cookies[utils.kiteuser().id]}`,
+      },
+    }
+
+    return super.delete(request)
   }
 
   public async cancelRegularOrder(id: number) {

@@ -310,6 +310,17 @@ export class Utils {
       )
     })
   }
+
+  public computeQty(data: any) {
+    if (data.positionSize === 0 || data.buyPrice === 0) return 0
+
+    const toInvest: number = Math.floor(
+      data.capital * (data.positionSize / 100),
+    )
+    const qty = Math.floor(toInvest / data.buyPrice)
+
+    return qty
+  }
 }
 
 const utils = new Utils()

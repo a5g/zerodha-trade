@@ -3,14 +3,14 @@ import config from '../config'
 
 const users = config.users
 
-test.describe('Kite Login => ', () => {
-  for (let i = 0; i < users.length; i += 1) {
-    test(`login => ${users[i].id}`, async ({ kite }) => {
+test.describe('Kite Login', () => {
+  for (let i = 0; i < config.users.length; i += 1) {
+    test(`[${users[i].name}] [id: ${users[i].id}]`, async ({ kite }) => {
       await kite.removeSession(users[i].id.toString())
       await kite.gotoKite()
       await kite.login(
         users[i].id.toString(),
-        config.users[i].username,
+        config.users[i].kiteid,
         config.users[i].password,
       )
     })

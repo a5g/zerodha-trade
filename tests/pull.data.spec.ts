@@ -5,7 +5,7 @@ import config from '../config'
 
 // const Papa = require('papaparse') // to parse CSV
 
-test(`Pull order data from Google sheet`, async ({ utils }) => {
+test(`Pull order data from local excel file`, async ({ utils }) => {
   // From Google sheet
   // const response = await fetch(config.datasheetURL) // your published link
   // const csv = await response.text()
@@ -16,7 +16,7 @@ test(`Pull order data from Google sheet`, async ({ utils }) => {
 
   // from local file
   const tdata = utils
-    .readDataFromXLSX('./data/trade.xlsx', 'trade')
+    .readDataFromXLSX('./data/trade-data-api.xlsx', 'data')
     .filter((row) => row.trading_symbol !== undefined)
   // tdata = tdata.filter((row) => row.trading_symbol !== undefined)
   // console.log(tdata)
@@ -47,7 +47,7 @@ test(`Pull order data from Google sheet`, async ({ utils }) => {
 
   // parsedData = parsedData.filter((row) => row.tradingSymbol.trim() !== '')
 
-  await utils.writeJSON(parsedData, './data/order.api.ts')
+  await utils.writeJSON(parsedData, './data/trade-data-api.ts')
 
   // console.log(parsedData)
   // console.log(`checksum: ${parsedData[0].checksum}`)
