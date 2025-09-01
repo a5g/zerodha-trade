@@ -149,7 +149,7 @@ export class KiteAPI extends API {
       variety: 'regular',
       exchange: payload.exchange,
       tradingsymbol: payload.tradingsymbol,
-      transaction_type: 'LIMIT',
+      transaction_type: payload.transaction_type,
       order_type: payload.order_type,
       quantity: payload.quantity,
       price: payload.price,

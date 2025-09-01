@@ -2,13 +2,13 @@ import { test } from '../fixtures/auto.test'
 import orders from '../data/trade-data-ui'
 import { utils } from '../utils/utils'
 
-const user = utils.kiteuser(3) // (recommended) for quick access using commandline
+const user = utils.kiteuser(2) // (recommended) for quick access using commandline
 // const KITE_USER = utils.getUserObjectById(1) // to run within vscode using playwright plugin
 
 test.use({ storageState: `.auth/${user.id}.json` })
 
 test.describe(`${user.name} => `, () => {
-  test(`navigate => holdings @navigate`, async ({ kite }) => {
+  test(`navigate > holdings`, async ({ kite }) => {
     await kite.gotoHoldingsPage()
     // await kite.pause()
   })

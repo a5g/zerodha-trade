@@ -93,7 +93,7 @@ test.describe(`Regular Order`, () => {
   })
 
   orders.forEach((order, index) => {
-    test(`${order.tradingSymbol} [${index + 1}] @amo_order`, async ({
+    test(`@amo_order ${order.tradingSymbol} [${index + 1}]`, async ({
       kiteAPI,
     }) => {
       // buy
@@ -113,21 +113,12 @@ test.describe(`Regular Order`, () => {
         capital: utils.kiteuser().capital,
       }
 
-      //   const payload = {
-      //   exchange: 'NSE',
-      //   tradingsymbol: 'TCS',
-      //   transaction_type: 'BUY',
-      //   // order_type: 'LIMIT',
-      //   quantity: 30,
-      //   price: 2800,
-      // }
-
       if (data.quantity <= 0) {
         data.quantity = utils.computeQty(data)
       }
 
       if (data.quantity > 0) {
-        // GTT buy
+        // AMO buy
         if (data.buyPrice > 0) {
           data.price = data.buyPrice
           await kiteAPI.placeAMO(data)
@@ -141,7 +132,7 @@ test.describe(`Regular Order`, () => {
           )
         }
 
-        // GTT sell
+        // AMO sell
         if (data.sellPrice > 0 && data.buyPrice === 0) {
           data.price = data.sellPrice
           data.sellPrice = order.sellPrice
@@ -161,22 +152,7 @@ test.describe(`Regular Order`, () => {
     })
   })
 
-  // test(`Regular order test`, async ({ kiteAPI }) => {
-  //   // buy
-  //   const payload = {
-  //     exchange: 'NSE',
-  //     tradingsymbol: 'TCS',
-  //     transaction_type: 'BUY',
-  //     // order_type: 'LIMIT',
-  //     quantity: 30,
-  //     price: 2800,
-  //   }
-
-  //   const amo = await kiteAPI.placeRegularOrder(payload)
-  //   console.log(amo)
-  // })
-
-  test('Cancel all open AMO orders @amo_cancel', async ({ kiteAPI }) => {
+  test('@amo_cancel AMO orders ', async ({ kiteAPI }) => {
     const openOrders = await kiteAPI.getAMOOpenOrders()
 
     for (const order of openOrders) {

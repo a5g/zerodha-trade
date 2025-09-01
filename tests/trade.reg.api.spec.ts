@@ -35,15 +35,15 @@ function printRow(row: any, index) {
 
   const rowInfo =
     utils.pad(index + 1, 5) +
-    utils.pad(row.tradingSymbol, 15) +
+    utils.pad(row.tradingsymbol, 15) +
     utils.pad(row.buyPrice > 0 ? 'Buy' : 'Sell', 4) +
-    utils.pad(row.qty, 12, true) +
+    utils.pad(row.quantity, 12, true) +
     utils.pad(row.buyPrice === 0 ? '-' : row.buyPrice, 14, true) +
     utils.pad(row.sellPrice === 0 ? '-' : row.sellPrice, 14, true) +
     utils.pad(
       row.buyPrice === 0
         ? '-'
-        : (row.qty * row.buyPrice).toLocaleString('en-IN'),
+        : (row.quantity * row.buyPrice).toLocaleString('en-IN'),
       15,
       true,
     ) +
@@ -93,7 +93,9 @@ test.describe(`Regular Order`, () => {
   })
 
   orders.forEach((order, index) => {
-    test(`${order.tradingSymbol} [${index + 1}]`, async ({ kiteAPI }) => {
+    test(`@reg_order ${order.tradingSymbol} [${index + 1}]`, async ({
+      kiteAPI,
+    }) => {
       // buy
       const data = {
         user: utils.kiteuser().name,
@@ -106,25 +108,17 @@ test.describe(`Regular Order`, () => {
         buyPrice: order.buyPrice,
         sellPrice: order.sellPrice,
         transaction_type: 'BUY',
+        order_type: 'LIMIT',
         positionSize: order.positionSize,
         capital: utils.kiteuser().capital,
       }
-
-      //   const payload = {
-      //   exchange: 'NSE',
-      //   tradingsymbol: 'TCS',
-      //   transaction_type: 'BUY',
-      //   // order_type: 'LIMIT',
-      //   quantity: 30,
-      //   price: 2800,
-      // }
 
       if (data.quantity <= 0) {
         data.quantity = utils.computeQty(data)
       }
 
       if (data.quantity > 0) {
-        // GTT buy
+        // Regular buy
         if (data.buyPrice > 0) {
           data.price = data.buyPrice
           await kiteAPI.placeRegularOrder(data)
@@ -138,7 +132,7 @@ test.describe(`Regular Order`, () => {
           )
         }
 
-        // GTT sell
+        // Regular sell
         if (data.sellPrice > 0 && data.buyPrice === 0) {
           data.price = data.sellPrice
           data.sellPrice = order.sellPrice
@@ -158,26 +152,14 @@ test.describe(`Regular Order`, () => {
     })
   })
 
-  // test(`Regular order test`, async ({ kiteAPI }) => {
-  //   // buy
-  //   const payload = {
-  //     exchange: 'NSE',
-  //     tradingsymbol: 'TCS',
-  //     transaction_type: 'BUY',
-  //     // order_type: 'LIMIT',
-  //     quantity: 30,
-  //     price: 2800,
-  //   }
+  orders.forEach((order) => {
+    test(`@reg_cancel [${order.tradingSymbol}]`, async ({ kiteAPI }) => {
+      const activeGTT = await kiteAPI.getRegularOpenOrders(order.tradingSymbol)
+      console.log(activeGTT)
 
-  //   const amo = await kiteAPI.placeRegularOrder(payload)
-  //   console.log(amo)
-  // })
-
-  // test.skip('Cancel all open orders', async ({ kiteAPI }) => {
-  //   const openOrders = await kiteAPI.getRegularOpenOrders()
-
-  //   for (const order of openOrders) {
-  //     await kiteAPI.cancelRegularOrder(order.order_id)
-  //   }
-  // })
+      for (const order of activeGTT) {
+        await kiteAPI.cancelRegularOrder(order.order_id)
+      }
+    })
+  })
 })
