@@ -1,0 +1,46 @@
+{
+  "name": "zerodha-trade",
+  "version": "1.0.0",
+  "description": "Zerodha trade automation project",
+  "main": "index.js",
+  "scripts": {
+    "clean": "rm -rf screenshots/",
+    "json": "npx playwright test tests/json.spec.ts",
+    "pull-data": "npx playwright test tests/pull.data.spec.ts",
+    "login": "npx playwright test tests/login.all.spec.ts",
+    "navigate": "npx playwright test tests/navigate/*.spec.ts --ui -g navigate",
+    "gtt": "npm run pull-data && npx playwright test tests/trade.gtt.api.spec.ts -g gtt_order",
+    "gttcancel": "npm run pull-data && npx playwright test tests/trade.gtt.api.spec.ts -g gtt_cancel",
+    "gtt1": "npm run pull-data && export kcid=1 && npx playwright test tests/trade.gtt.api.spec.ts -g gtt_order",
+    "gtt2": "npm run pull-data && export kcid=2 && npx playwright test tests/trade.gtt.api.spec.ts -g gtt_order",
+    "gtt3": "npm run pull-data && export kcid=3 && npx playwright test tests/trade.gtt.api.spec.ts -g gtt_order",
+    "amo": "npm run pull-data && npx playwright test tests/trade.amo.api.spec.ts -g amo_order",
+    "amocancel": "npm run pull-data && npx playwright test tests/trade.amo.api.spec.ts -g amo_cancel",
+    "reg": "npm run pull-data && npx playwright test tests/trade.reg.api.spec.ts -g reg_order",
+    "regcancel": "npm run pull-data && npx playwright test tests/trade.reg.api.spec.ts -g reg_cancel"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^24.0.14",
+    "@typescript-eslint/eslint-plugin": "^8.12.2",
+    "@typescript-eslint/parser": "^8.12.2",
+    "eslint": "^8.35.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "eslint-plugin-promise": "^7.1.0",
+    "prettier": "^3.6.2",
+    "ts-node": "^10.9.2"
+  },
+  "dependencies": {
+    "@playwright/test": "^1.54.1",
+    "csvtojson": "^2.0.10",
+    "line-reader": "^0.4.0",
+    "papaparse": "^5.5.3",
+    "qs": "^6.14.0",
+    "xlsx": "^0.18.5"
+  }
+}
