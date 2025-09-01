@@ -151,12 +151,16 @@ test.describe(`Regular Order`, () => {
       }
     })
   })
+})
 
-  test('@amo_cancel AMO orders ', async ({ kiteAPI }) => {
-    const openOrders = await kiteAPI.getAMOOpenOrders()
+test.describe(`AMO Cancel`, () => {
+  orders.forEach((order) => {
+    test(`@amo_cancel [${order.tradingSymbol}]`, async ({ kiteAPI }) => {
+      const openOrders = await kiteAPI.getAMOOpenOrders(order.tradingSymbol)
 
-    for (const order of openOrders) {
-      await kiteAPI.cancelAMOOrder(order.order_id)
-    }
+      for (const order of openOrders) {
+        await kiteAPI.cancelAMOOrder(order.order_id)
+      }
+    })
   })
 })

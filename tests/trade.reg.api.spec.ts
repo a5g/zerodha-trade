@@ -151,13 +151,14 @@ test.describe(`Regular Order`, () => {
       }
     })
   })
+})
 
+test.describe(`Reg Cancel`, () => {
   orders.forEach((order) => {
     test(`@reg_cancel [${order.tradingSymbol}]`, async ({ kiteAPI }) => {
-      const activeGTT = await kiteAPI.getRegularOpenOrders(order.tradingSymbol)
-      console.log(activeGTT)
+      const openOrders = await kiteAPI.getRegularOpenOrders(order.tradingSymbol)
 
-      for (const order of activeGTT) {
+      for (const order of openOrders) {
         await kiteAPI.cancelRegularOrder(order.order_id)
       }
     })

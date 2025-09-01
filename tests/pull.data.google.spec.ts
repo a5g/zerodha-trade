@@ -3,8 +3,6 @@ import Papa from 'papaparse'
 import { test } from '../fixtures/auto.test'
 import config from '../config'
 
-// const Papa = require('papaparse') // to parse CSV
-
 test(`Pull order data from Google sheet`, async ({ utils }) => {
   // From Google sheet
   const response = await fetch(config.datasheetURL) // your published link
@@ -14,14 +12,6 @@ test(`Pull order data from Google sheet`, async ({ utils }) => {
   const tdata = Papa.parse(csv, { header: true }).data.filter(
     (d) => d.trading_symbol !== '',
   )
-  // console.log(tdata)
-
-  // from local file
-  // const tdata = utils
-  //   .readDataFromXLSX('./data/trade.xlsx', 'trade')
-  //   .filter((row) => row.trading_symbol !== undefined)
-  // tdata = tdata.filter((row) => row.trading_symbol !== undefined)
-  // console.log(tdata)
 
   const parsedData = tdata
     .map((item) => ({
@@ -54,10 +44,5 @@ test(`Pull order data from Google sheet`, async ({ utils }) => {
     }))
     .filter((row) => row.tradingSymbol.trim() !== '')
 
-  // parsedData = parsedData.filter((row) => row.tradingSymbol.trim() !== '')
-
   await utils.writeJSON(parsedData, './data/order.api.ts')
-
-  console.log(parsedData)
-  console.log(`checksum: ${parsedData[0].checksum}`)
 })

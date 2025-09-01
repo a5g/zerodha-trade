@@ -168,7 +168,7 @@ export class KiteAPI extends API {
       )
     }
 
-    return orders.data.data.filter((order) => order.status === 'OPEN')
+    // return orders.data.data.filter((order) => order.status === 'OPEN')
   }
 
   public async getAMOOpenOrders(tradingSymbol: string = '') {
@@ -190,9 +190,9 @@ export class KiteAPI extends API {
       )
     }
 
-    return orders.data.data.filter(
-      (order) => order.status === 'AMO REQ RECEIVED',
-    )
+    // return orders.data.data.filter(
+    //   (order) => order.status === 'AMO REQ RECEIVED',
+    // )
   }
 
   public async getGTTActiveOrders(tradingSymbol: string = '') {
@@ -214,7 +214,7 @@ export class KiteAPI extends API {
       )
     }
 
-    return orders.data.data.filter((order) => order.status === 'active')
+    // return orders.data.data.filter((order) => order.status === 'active')
   }
 
   public async cancelGTTOrder(id: number) {

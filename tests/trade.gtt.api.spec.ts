@@ -147,7 +147,9 @@ test.describe(`GTT`, () => {
       }
     })
   })
+})
 
+test.describe(`GTT Cancel`, () => {
   orders.forEach((order) => {
     test(`@gtt_cancel [${order.tradingSymbol}]`, async ({ kiteAPI }) => {
       const activeGTT = await kiteAPI.getGTTActiveOrders(order.tradingSymbol)
