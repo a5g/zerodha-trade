@@ -41,7 +41,7 @@ const config: PlaywrightTestConfig = {
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
-    headless: false,
+    headless: true,
     // storageState: `state.${cnfg.kite.username}.json`,
     // storageState: `state.screener.json`,
     viewport: {
@@ -65,7 +65,7 @@ const config: PlaywrightTestConfig = {
           width: 1400,
           height: 1275,
         },
-        headless: false,
+        headless: true,
         launchOptions: { args: ['--remote-debugging-port=9222'] },
       },
       // dependencies: ['setup'],

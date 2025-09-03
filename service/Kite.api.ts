@@ -44,8 +44,10 @@ export class KiteAPI extends API {
       order.transactionType === 'BUY' ? order.buyPrice : order.sellPrice
     const price =
       order.transactionType === 'BUY'
-        ? order.buyPrice * 1.005
-        : order.sellPrice * 0.995
+        ? utils.zerodaPriceFormat(order.buyPrice * 1.005)
+        : utils.zerodaPriceFormat(order.sellPrice * 0.995)
+
+    const LAST_PRICE = utils.zerodaPriceFormat(triggerPrice * 0.99)
 
     const data = qs.stringify({
       condition: `{"exchange":"${order.exchange}","tradingsymbol":"${order.tradingSymbol}","trigger_values":[${triggerPrice}],"last_price":${order.lastPrice}}`,
@@ -55,6 +57,26 @@ export class KiteAPI extends API {
     })
 
     return data
+  }
+
+  public getOCOOrderData(order: any) {
+    const stoplossTriggerPrice = utils.zerodaPriceFormat(order.stoplossPrice)
+    const stoplossPrice = utils.zerodaPriceFormat(order.stoplossPrice * 0.995)
+    const targetTriggerPrice = utils.zerodaPriceFormat(order.targetPrice)
+    const targetPrice = utils.zerodaPriceFormat(order.targetPrice * 0.995)
+
+    const data = qs.stringify({
+      condition: `{"exchange":"${order.exchange}","tradingsymbol":"${order.tradingSymbol}","trigger_values":[${stoplossTriggerPrice}, ${targetTriggerPrice}],"last_price":${order.lastPrice}}`,
+      orders: `[{"exchange":"${order.exchange}","tradingsymbol":"${order.tradingSymbol}","transaction_type":"${order.transactionType}","quantity":${order.qty},"price":${stoplossPrice},"order_type":"LIMIT","product":"CNC"},{"exchange":"${order.exchange}","tradingsymbol":"${order.tradingSymbol}","transaction_type":"${order.transactionType}","quantity":${order.qty},"price":${targetPrice},"order_type":"LIMIT","product":"CNC"}]`,
+      type: 'two-leg',
+      expires_at: this.getFutureDate(),
+    })
+
+    return data
+
+    // {"exchange":"NSE","tradingsymbol":"IXIGO","trigger_values":[249.9,319.35],"last_price":277.7}
+    // [{"exchange":"NSE","tradingsymbol":"IXIGO","transaction_type":"SELL","quantity":1,"price":263.8,"order_type":"LIMIT","product":"CNC"},{"exchange":"NSE","tradingsymbol":"IXIGO","transaction_type":"SELL","quantity":1,"price":291.55,"order_type":"LIMIT","product":"CNC"}]
+    // two-leg
   }
 
   public async getLTP({ exchange, tradingsymbol }) {
@@ -85,6 +107,21 @@ export class KiteAPI extends API {
     return super.post(request)
   }
 
+  public async placeOCO(order: any) {
+    const data = this.getOCOOrderData(order)
+    const request: any = {
+      url: `${config.apiHost}/oms/gtt/triggers`,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization: `enctoken ${cookies[utils.kiteuser().id]}`,
+      },
+      data,
+    }
+
+    return super.post(request)
+  }
+
   public async placeRegularOrder(payload: any) {
     const data = qs.stringify({
       variety: 'regular',
@@ -93,7 +130,7 @@ export class KiteAPI extends API {
       transaction_type: payload.transaction_type,
       order_type: payload.order_type,
       quantity: payload.quantity,
-      price: payload.price,
+      price: utils.zerodaPriceFormat(payload.price),
       product: 'CNC',
       validity: 'DAY',
       disclosed_quantity: 0,
@@ -125,7 +162,7 @@ export class KiteAPI extends API {
       transaction_type: payload.transaction_type,
       order_type: payload.order_type,
       quantity: payload.quantity,
-      price: payload.price,
+      price: utils.zerodaPriceFormat(payload.price),
       product: 'CNC',
       validity: 'DAY',
       disclosed_quantity: 0,
@@ -168,6 +205,8 @@ export class KiteAPI extends API {
       )
     }
 
+    return []
+
     // return orders.data.data.filter((order) => order.status === 'OPEN')
   }
 
@@ -190,6 +229,7 @@ export class KiteAPI extends API {
       )
     }
 
+    return []
     // return orders.data.data.filter(
     //   (order) => order.status === 'AMO REQ RECEIVED',
     // )
@@ -210,9 +250,37 @@ export class KiteAPI extends API {
       return orders.data.data.filter(
         (order) =>
           order.status === 'active' &&
-          order.condition.tradingsymbol === tradingSymbol,
+          order.condition.tradingsymbol === tradingSymbol &&
+          order.type === 'single',
       )
     }
+
+    return []
+
+    // return orders.data.data.filter((order) => order.status === 'active')
+  }
+
+  public async getOCOActiveOrders(tradingSymbol: string = '') {
+    const request: any = {
+      url: `${config.apiHost}/oms/gtt/triggers`,
+      method: 'GET',
+      headers: {
+        Authorization: `enctoken ${cookies[utils.kiteuser().id]}`,
+      },
+    }
+
+    const orders: any = await super.get(request)
+
+    if (tradingSymbol !== '') {
+      return orders.data.data.filter(
+        (order) =>
+          order.status === 'active' &&
+          order.condition.tradingsymbol === tradingSymbol &&
+          order.type === 'two-leg',
+      )
+    }
+
+    return []
 
     // return orders.data.data.filter((order) => order.status === 'active')
   }

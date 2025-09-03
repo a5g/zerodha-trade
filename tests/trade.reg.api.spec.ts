@@ -11,7 +11,7 @@ const placedOrder = []
 
 function headerInfo() {
   const arr = []
-  arr[0] = `\n\nBelow orders have been executed for [${utils.kiteuser().name}] [capital: ${utils.kiteuser().capital.toLocaleString('en-IN')}]`
+  arr[0] = `\n\nBelow REGULAR orders have been executed for [${utils.kiteuser().name}] [capital: ${utils.kiteuser().capital.toLocaleString('en-IN')}]`
   arr[1] =
     '------------------------------------------------------------------------------------------------'
   arr[2] =
@@ -154,8 +154,10 @@ test.describe(`Regular Order`, () => {
 })
 
 test.describe(`Reg Cancel`, () => {
-  orders.forEach((order) => {
-    test(`@reg_cancel [${order.tradingSymbol}]`, async ({ kiteAPI }) => {
+  orders.forEach((order, index) => {
+    test(`@reg_cancel [${order.tradingSymbol}] [${index}]`, async ({
+      kiteAPI,
+    }) => {
       const openOrders = await kiteAPI.getRegularOpenOrders(order.tradingSymbol)
 
       for (const order of openOrders) {

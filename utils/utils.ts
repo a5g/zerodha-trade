@@ -321,6 +321,14 @@ export class Utils {
 
     return qty
   }
+
+  public zerodaPriceFormat(price: number) {
+    // Round to nearest multiple of 0.05
+    let rounded = Math.round(price / 0.05) * 0.05
+
+    // Fix to 2 decimals
+    return rounded.toFixed(2)
+  }
 }
 
 const utils = new Utils()
