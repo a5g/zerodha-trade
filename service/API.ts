@@ -92,7 +92,7 @@ export class API {
     return this.validation(start, response)
   }
 
-  public async put(options: any, { apiToFail = false, schema = {} } = {}) {
+  public async put(options: any) {
     // this.printcURL(options)
 
     const start = new Date().getTime()
@@ -101,10 +101,10 @@ export class API {
       data: options.data,
     })
 
-    return this.validation(start, response, apiToFail, schema)
+    return this.validation(start, response)
   }
 
-  public async delete(options: any, { apiToFail = false, schema = {} } = {}) {
+  public async delete(options: any) {
     // this.printcURL(options)
 
     const start = new Date().getTime()

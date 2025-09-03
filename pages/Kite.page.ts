@@ -1,5 +1,5 @@
 // import fs from 'fs'
-import { Page } from '@playwright/test'
+import { Page, expect } from '@playwright/test'
 import config from '../config'
 
 const XLSX = require('xlsx')
@@ -189,6 +189,16 @@ export default class KitePage {
     await this.gotoOrdersPage()
     // await this.page.getByRole('link', { name: 'Orders' }).click()
     await this.page.getByRole('link', { name: 'GTT' }).click()
+    await this.page.waitForTimeout(5000)
+  }
+
+  public async openGTTDialog(tradingSymbol) {
+    await this.gotoGTTPage()
+    await this.page.getByRole('button', { name: 'New GTT' }).click()
+    await this.gttSearchText.fill(tradingSymbol)
+    await this.searchResultsFirstItem.click()
+    await this.page.getByRole('button', { name: 'Create GTT' }).click()
+    await this.page.waitForTimeout(2000)
   }
 
   public async login(name: string, username: string, password: string) {
@@ -199,6 +209,30 @@ export default class KitePage {
     await this.loginBtn.click()
     await this.userProfile.waitFor()
     await this.storeSession(name)
+  }
+
+  public async getLTP(exchange, tradingSymbol) {
+    await this.page.goto(`${config.baseURL}`)
+    // await this.page.getByRole('tab', { name: '7' }).click()
+
+    await this.searchText.fill(tradingSymbol)
+    await this.searchResultsFirstItem.hover()
+    await this.buyBtn.click()
+
+    await this.page.waitForFunction(() =>
+      document
+        .querySelector(`div.exchange > label > span`)
+        .textContent.includes('.'),
+    )
+
+    let ltp = await (
+      await this.page.$(
+        `//div[@class="exchange-selector"]//label[contains(text(), '${exchange}')]/span`,
+      )
+    ).textContent()
+    ltp = ltp.substring(1, ltp.length).replace(/,/, '')
+
+    return ltp
   }
 
   public async regularOrder(
