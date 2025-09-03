@@ -52,9 +52,9 @@ test('Delete summary.txt content', () => {
   })
 })
 
-test.use({ storageState: `.auth/${utils.kiteuser().id}.json` })
-
 test.describe(`OCO`, () => {
+  test.use({ storageState: `.auth/${utils.kiteuser().id}.json` })
+
   test.beforeAll(() => {
     fs.writeFile(filePath, headerInfo().join(`\n`), 'utf8', (err) => {
       if (err) {

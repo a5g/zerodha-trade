@@ -9,7 +9,7 @@
     "pull-data": "npx playwright test tests/pull.data.spec.ts",
     "pull-data-oco": "npx playwright test tests/pull.data.oco.spec.ts",
     "login": "npx playwright test tests/login.all.spec.ts --headed",
-    "login.divesh": "export kcid=6 && npx playwright test tests/login.user.spec.ts --headed",
+    "login.user": "npx playwright test tests/login.user.spec.ts --headed",
     "navigate": "export kcid=1 && npx playwright test tests/navigate -g navigate --headed --ui",
     "gtt": "npm run pull-data && npx playwright test tests/trade.gtt.api.spec.ts -g gtt_order",
     "gttcancel": "npm run pull-data && npx playwright test tests/trade.gtt.api.spec.ts -g gtt_cancel",
