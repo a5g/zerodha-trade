@@ -129,7 +129,7 @@ export class KiteAPI extends API {
       tradingsymbol: payload.tradingsymbol,
       transaction_type: payload.transaction_type,
       order_type: payload.order_type,
-      quantity: payload.quantity,
+      quantity: payload.qty,
       price: utils.zerodaPriceFormat(payload.price),
       product: 'CNC',
       validity: 'DAY',

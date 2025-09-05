@@ -153,9 +153,9 @@ test.describe(`AMO Order`, () => {
   })
 })
 
-test.describe(`AMO Cancel`, () => {
+test.describe(`AMO Order Cancel`, () => {
   orders.forEach((order, index) => {
-    test(`@amo_cancel [${order.tradingSymbol}] [${index}]`, async ({
+    test(`@amo_cancel [${order.tradingSymbol}] [${index + 1}]`, async ({
       kiteAPI,
     }) => {
       const openOrders = await kiteAPI.getAMOOpenOrders(order.tradingSymbol)

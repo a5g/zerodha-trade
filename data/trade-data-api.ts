@@ -1,7 +1,7 @@
 export default [
   {
     "exchange": "NSE",
-    "tradingSymbol": "QPOWER",
+    "tradingSymbol": "VIMTALABS",
     "ltp": null,
     "qty": 0,
     "buyPrice": 895,

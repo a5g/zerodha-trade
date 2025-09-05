@@ -35,7 +35,7 @@ function printRow(row: any, index) {
   const rowInfo =
     utils.pad(index + 1, 5) +
     utils.pad(row.tradingSymbol, 15) +
-    utils.pad(row.ltp, 10, true) +
+    utils.pad(utils.formatIndianNumber(row.ltp, true), 10, true) +
     utils.pad('Sell (OCO)', 15, true) +
     utils.pad(utils.formatIndianNumber(row.qty), 12, true) +
     utils.pad(utils.formatIndianNumber(row.buyPrice, true), 15, true) +
@@ -55,7 +55,7 @@ test('Delete summary.txt content', () => {
   })
 })
 
-test.describe(`OCO`, () => {
+test.describe(`OCO Order`, () => {
   test.use({ storageState: `.auth/${utils.kiteuser().kcid}.json` })
   test.afterAll(() => {
     // print the final summary
@@ -109,9 +109,9 @@ test.describe(`OCO`, () => {
   })
 })
 
-test.describe(`OCO Cancel`, () => {
+test.describe(`OCO Order Cancel`, () => {
   orders.forEach((order, index) => {
-    test(`@oco_cancel [${order.tradingSymbol}] [${index}]`, async ({
+    test(`@oco_cancel [${order.tradingSymbol}] [${index + 1}]`, async ({
       kiteAPI,
     }) => {
       const activeGTT = await kiteAPI.getOCOActiveOrders(order.tradingSymbol)

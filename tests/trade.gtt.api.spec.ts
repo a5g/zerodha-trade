@@ -72,7 +72,7 @@ test('Delete summary.txt content', () => {
   })
 })
 
-test.describe(`GTT`, () => {
+test.describe(`GTT Order`, () => {
   test.afterAll(() => {
     // print the final summary
     // Table Header
@@ -119,7 +119,7 @@ test.describe(`GTT`, () => {
       if (data.qty > 0) {
         // GTT buy
         if (data.buyPrice > 0) {
-          sellFlag = false
+          sellFlag = false // set this flag to true, if you want to place both buy and sell GTT orders at the same time
           await kiteAPI.placeGTT(data)
           const d = { ...data }
           d.sellPrice = 0
@@ -151,9 +151,9 @@ test.describe(`GTT`, () => {
   })
 })
 
-test.describe(`GTT Cancel`, () => {
+test.describe(`GTT Order Cancel`, () => {
   orders.forEach((order, index) => {
-    test(`@gtt_cancel [${order.tradingSymbol}] [${index}]`, async ({
+    test(`@gtt_cancel [${order.tradingSymbol}] [${index + 1}]`, async ({
       kiteAPI,
     }) => {
       const activeGTT = await kiteAPI.getGTTActiveOrders(order.tradingSymbol)

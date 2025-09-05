@@ -10,14 +10,6 @@ export class Utils {
     return config.users.filter((u) => u.kcid === id)[0]
   }
 
-  // public getUserObjectById(id: number = config.kcid) {
-  //   return config.users.filter((x) => x.kcid === id)[0]
-  // }
-
-  // public getUserObjectByName(name: string = config.kcname) {
-  //   return config.users.filter((u) => u.name === name)[0]
-  // }
-
   public indNumber(value: number) {
     return value.toLocaleString('en-IN')
   }
@@ -26,22 +18,11 @@ export class Utils {
     const workbook = XLSX.readFile(filePath)
 
     return XLSX.utils.sheet_to_json(workbook.Sheets[sheetName])
-
-    // const sheetNameList = workbook.SheetNames
-    // const xldata: any[] = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName])
-    // return xlData.filter((data) => data.trading_symbol !== undefined)
   }
 
   public isEmpty(value) {
     return value === undefined || value === null || value === ''
   }
-
-  // public pad(str, length) {
-  //   str = String(str)
-  //   return str.length >= length
-  //     ? str.slice(0, length)
-  //     : str + ' '.repeat(length - str.length)
-  // }
 
   public pad(str, length, alignRight = false) {
     str = String(str)
@@ -165,9 +146,6 @@ export class Utils {
   }
 
   sortByBuyDate(a, b) {
-    // const c = this.convertToDate(a.buyDate)
-    // const d = this.convertToDate(b.buyDate)
-
     let m = a.buyDate.split('-')
     const c = new Date(m[1] + '/' + m[0] + '/' + m[2])
 
@@ -317,46 +295,6 @@ export class Utils {
     return sign + intPart + (printDecimal ? '.' + decPart : '')
   }
 
-  // formatIndianNumber(number, printDecimal: boolean = true) {
-  //   // Convert the number to a string
-  //   const numberString = number.toString()
-
-  //   // Split the number into integer and decimal parts
-  //   const [integerPart, decimalPart] = numberString.split('.')
-
-  //   // Format the integer part with commas for lakh and crore separators
-  //   const formattedIntegerPart = integerPart.replace(
-  //     /\B(?=(\d{3})+(?!\d))/g,
-  //     ',',
-  //   )
-
-  //   // console.log(decimalPart)
-
-  //   let d = decimalPart
-  //   if (decimalPart !== undefined) {
-  //     d = decimalPart.substring(0, 2)
-  //     if (d < 10 && d[0] !== '0') d += '0'
-  //   }
-  //   // Combine the formatted integer part and the decimal part
-  //   const formattedNumber =
-  //     decimalPart && printDecimal
-  //       ? `${formattedIntegerPart}.${d}`
-  //       : formattedIntegerPart
-
-  //   // num.toLocaleString("en-IN");
-
-  //   const num = Number(formattedNumber.replace(/,/g, ''))
-  //   const formatted = num.toLocaleString('en-IN')
-
-  //   if (formatted.indexOf('.') > -1) {
-  //     let dec = formatted.split('.')[1]
-  //     dec = dec.length === 1 ? `.${dec}0` : `.${dec}`
-
-  //     return `${formatted.split('.')[0]}${dec}`
-  //   }
-  //   return formatted
-  // }
-
   async readCSVData(myCSVFilePath: string): Promise<any> {
     return csv()
       .fromFile(myCSVFilePath)
@@ -390,7 +328,7 @@ export class Utils {
 
   public zerodaPriceFormat(price: number) {
     // Round to nearest multiple of 0.05
-    let rounded = Math.round(price / 0.05) * 0.05
+    const rounded = Math.round(price / 0.05) * 0.05
 
     // Fix to 2 decimals
     return rounded.toFixed(2)
