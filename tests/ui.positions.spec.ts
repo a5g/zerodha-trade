@@ -18,7 +18,7 @@ const reset = '\x1b[0m' // Resets text color to default
 
 function headerInfo() {
   const arr = []
-  arr[0] = `\n\nEquity Holdings [${utils.kiteuser().name}] [id: ${utils.kiteuser().id}] [capital: ${utils.kiteuser().capital.toLocaleString('en-IN')}]`
+  arr[0] = `\n\nEquity Holdings [${utils.kiteuser().name}] [id: ${utils.kiteuser().kcid}] [capital: ${utils.kiteuser().capital.toLocaleString('en-IN')}]`
   arr[1] =
     '-----------------------------------------------------------------------------------------------------------------'
   arr[2] =

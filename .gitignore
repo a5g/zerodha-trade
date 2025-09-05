@@ -16,3 +16,4 @@ data/~$trade-data-api.xlsx
 tests/login.divesh.spec.ts
 tests/navigate/trade.nav.6.ui.spec.ts
 users.json
+users.ts

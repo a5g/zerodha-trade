@@ -99,7 +99,7 @@ test.describe(`Regular Order`, () => {
       // buy
       const data = {
         user: utils.kiteuser().name,
-        userid: utils.kiteuser().id,
+        userid: utils.kiteuser().kcid,
         exchange: order.exchange,
         tradingsymbol: order.tradingSymbol,
         lastPrice: order.ltp,

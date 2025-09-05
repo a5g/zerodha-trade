@@ -7,12 +7,12 @@ const XLSX = require('xlsx')
 
 export class Utils {
   public kiteuser(id: number = config.kcid) {
-    return config.users.filter((u) => u.id === id)[0]
+    return config.users.filter((u) => u.kcid === id)[0]
   }
 
-  public getUserObjectById(id: number = config.kcid) {
-    return config.users.filter((x) => x.id === id)[0]
-  }
+  // public getUserObjectById(id: number = config.kcid) {
+  //   return config.users.filter((x) => x.kcid === id)[0]
+  // }
 
   // public getUserObjectByName(name: string = config.kcname) {
   //   return config.users.filter((u) => u.name === name)[0]

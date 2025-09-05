@@ -4,10 +4,10 @@ export default [
     "tradingSymbol": "QPOWER",
     "ltp": null,
     "qty": 0,
-    "buyPrice": 934.55,
-    "sellPrice": 861.95,
-    "profitPercent": -7.77,
+    "buyPrice": 895,
+    "sellPrice": 875,
+    "profitPercent": -2.23,
     "tradeRisk": 0.5,
-    "positionSize": 6.44
+    "positionSize": 22.38
   }
 ]

@@ -9,22 +9,24 @@ let counter = -1
 
 const placedOrder = []
 
+const DIVIDER =
+  '-------------------------------------------------------------------------------------------------------'
 function headerInfo() {
   const arr = []
   arr[0] = `\n\nBelow OCO orders have been executed for [${utils.kiteuser().name}] [capital: ${utils.kiteuser().capital.toLocaleString('en-IN')}]`
-  arr[1] =
-    '------------------------------------------------------------------------------------------------'
+  arr[1] = DIVIDER
+
   arr[2] =
     utils.pad('No.', 5) +
     utils.pad('Stock', 15) +
-    utils.pad('Type', 10) +
+    utils.pad('LTP', 10, true) +
+    utils.pad('Type', 15, true) +
     utils.pad('Qty', 12, true) +
-    utils.pad('Buy Price', 14, true) +
-    utils.pad('Loss Price', 14, true) +
-    utils.pad('Profit Price', 15, true)
+    utils.pad('Buy Price', 15, true) +
+    utils.pad('Stoploss', 15, true) +
+    utils.pad('Target', 15, true)
 
-  arr[3] =
-    '------------------------------------------------------------------------------------------------'
+  arr[3] = DIVIDER
 
   return arr
 }
@@ -33,11 +35,12 @@ function printRow(row: any, index) {
   const rowInfo =
     utils.pad(index + 1, 5) +
     utils.pad(row.tradingSymbol, 15) +
-    utils.pad('Sell (OCO)', 10) +
-    utils.pad(row.qty, 12, true) +
-    utils.pad(row.buyPrice, 14, true) +
-    utils.pad(row.stoplossPrice, 14, true) +
-    utils.pad(row.targetPrice, 14, true)
+    utils.pad(row.ltp, 10, true) +
+    utils.pad('Sell (OCO)', 15, true) +
+    utils.pad(utils.formatIndianNumber(row.qty), 12, true) +
+    utils.pad(utils.formatIndianNumber(row.buyPrice, true), 15, true) +
+    utils.pad(utils.formatIndianNumber(row.stoplossPrice, true), 15, true) +
+    utils.pad(utils.formatIndianNumber(row.targetPrice, true), 15, true)
 
   return rowInfo
 }
@@ -53,17 +56,7 @@ test('Delete summary.txt content', () => {
 })
 
 test.describe(`OCO`, () => {
-  test.use({ storageState: `.auth/${utils.kiteuser().id}.json` })
-
-  test.beforeAll(() => {
-    fs.writeFile(filePath, headerInfo().join(`\n`), 'utf8', (err) => {
-      if (err) {
-        console.error('Error writing file:', err)
-      }
-      // console.log('File written successfully!')
-    })
-  })
-
+  test.use({ storageState: `.auth/${utils.kiteuser().kcid}.json` })
   test.afterAll(() => {
     // print the final summary
     // Table Header
@@ -74,14 +67,8 @@ test.describe(`OCO`, () => {
       console.log(printRow(row, index))
     })
 
-    console.log(
-      '------------------------------------------------------------------------------------------------',
-    )
-    fs.appendFileSync(
-      filePath,
-      `\n------------------------------------------------------------------------------------------------`,
-      'utf8',
-    )
+    console.log(DIVIDER)
+    fs.appendFileSync(filePath, `\n${DIVIDER}`, 'utf8')
   })
 
   orders.forEach((order, index) => {
@@ -89,15 +76,15 @@ test.describe(`OCO`, () => {
       kiteAPI,
       kite,
     }) => {
-      const LTP = await kite.getLTP(order.exchange, order.tradingSymbol)
+      const ltp = await kite.getLTP(order.exchange, order.tradingSymbol)
 
       // buy
       const data = {
         user: utils.kiteuser().name,
-        userid: utils.kiteuser().id,
+        userid: utils.kiteuser().kcid,
         exchange: order.exchange,
         tradingSymbol: order.tradingSymbol,
-        lastPrice: LTP,
+        ltp,
         qty: order.qty,
         buyPrice: order.buyPrice,
         stoplossPrice: order.stoplossPrice,

@@ -12,51 +12,59 @@ const filePath = 'summary.txt'
 let counter = -1
 
 const placedOrder = []
+const DIVIDER =
+  '---------------------------------------------------------------------------------------------------------------'
 
 function headerInfo() {
   const arr = []
   arr[0] = `\n\nBelow GTT orders have been executed for [${utils.kiteuser().name}] [capital: ${utils.kiteuser().capital.toLocaleString('en-IN')}]`
-  arr[1] =
-    '------------------------------------------------------------------------------------------------'
+  arr[1] = DIVIDER
   arr[2] =
     utils.pad('No.', 5) +
     utils.pad('Stock', 15) +
-    utils.pad('Type', 4) +
-    utils.pad('Qty', 12, true) +
-    utils.pad('Buy Price', 14, true) +
-    utils.pad('Sell Price', 14, true) +
+    utils.pad('LTP', 10, true) +
+    utils.pad('Type', 10, true) +
+    utils.pad('Qty', 10, true) +
+    utils.pad('Buy Price', 15, true) +
+    utils.pad('Sell Price', 15, true) +
     utils.pad('Invested', 15, true) +
-    utils.pad('Position', 14, true)
+    utils.pad('Position', 15, true)
 
-  arr[3] =
-    '------------------------------------------------------------------------------------------------'
+  arr[3] = DIVIDER
 
   return arr
 }
 
 function printRow(row: any, index) {
-  const pos = row.positionSize === null ? '-' : `${row.positionSize} %`
+  const pos = row.positionSize === null ? '-' : `${row.positionSize}%`
 
   const rowInfo =
     utils.pad(index + 1, 5) +
     utils.pad(row.tradingSymbol, 15) +
-    utils.pad(row.buyPrice > 0 ? 'Buy' : 'Sell', 4) +
-    utils.pad(row.qty, 12, true) +
-    utils.pad(row.buyPrice === 0 ? '-' : row.buyPrice, 14, true) +
-    utils.pad(row.sellPrice === 0 ? '-' : row.sellPrice, 14, true) +
+    utils.pad(utils.formatIndianNumber(row.ltp), 10, true) +
+    utils.pad(row.buyPrice > 0 ? 'Buy' : 'Sell', 10, true) +
+    utils.pad(utils.formatIndianNumber(row.qty), 10, true) +
     utils.pad(
-      row.buyPrice === 0
-        ? '-'
-        : (row.qty * row.buyPrice).toLocaleString('en-IN'),
+      row.buyPrice === 0 ? '-' : utils.formatIndianNumber(row.buyPrice, true),
       15,
       true,
     ) +
-    utils.pad(`${pos}`, 14, true)
+    utils.pad(
+      row.sellPrice === 0 ? '-' : utils.formatIndianNumber(row.sellPrice, true),
+      15,
+      true,
+    ) +
+    utils.pad(
+      row.buyPrice === 0
+        ? '-'
+        : utils.formatIndianNumber(row.qty * row.buyPrice),
+      15,
+      true,
+    ) +
+    utils.pad(`${pos}`, 15, true)
 
   return rowInfo
 }
-
-test.use({ storageState: `.auth/${utils.kiteuser().id}.json` })
 
 test('Delete summary.txt content', () => {
   fs.writeFile(filePath, headerInfo().join(`\n`), 'utf8', (err) => {
@@ -69,15 +77,6 @@ test('Delete summary.txt content', () => {
 })
 
 test.describe(`GTT`, () => {
-  test.beforeAll(() => {
-    fs.writeFile(filePath, headerInfo().join(`\n`), 'utf8', (err) => {
-      if (err) {
-        console.error('Error writing file:', err)
-      }
-      // console.log('File written successfully!')
-    })
-  })
-
   test.afterAll(() => {
     // print the final summary
     // Table Header
@@ -88,17 +87,12 @@ test.describe(`GTT`, () => {
       console.log(printRow(row, index))
     })
 
-    console.log(
-      '------------------------------------------------------------------------------------------------',
-    )
-    fs.appendFileSync(
-      filePath,
-      `\n------------------------------------------------------------------------------------------------`,
-      'utf8',
-    )
+    console.log(DIVIDER)
+    fs.appendFileSync(filePath, `\n${DIVIDER}`, 'utf8')
   })
 
   orders.forEach((order, index) => {
+    test.use({ storageState: `.auth/${utils.kiteuser().kcid}.json` })
     test(`@gtt_order ${order.tradingSymbol} [${index + 1}]`, async ({
       kiteAPI,
       kite,
@@ -107,15 +101,13 @@ test.describe(`GTT`, () => {
 
       const ltp = await kite.getLTP(order.exchange, order.tradingSymbol)
 
-      console.log(`Stock: ${order.tradingSymbol}\nPrice: ${ltp}`)
-
       // buy
       const data = {
         user: utils.kiteuser().name,
-        userid: utils.kiteuser().id,
+        userid: utils.kiteuser().kcid,
         exchange: order.exchange,
         tradingSymbol: order.tradingSymbol,
-        lastPrice: ltp,
+        ltp,
         qty: order.qty,
         buyPrice: order.buyPrice,
         sellPrice: order.sellPrice,

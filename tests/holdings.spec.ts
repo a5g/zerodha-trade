@@ -13,11 +13,11 @@ const green = '\x1b[38;2;0;255;0m'
 // const blue = '\x1b[34m'
 const reset = '\x1b[0m' // Resets text color to default
 
-const LINE =
+const DIVIDER =
   '--------------------------------------------------------------------------------------------------------------------'
 function headerInfo() {
   const arr = []
-  arr[0] = LINE
+  arr[0] = DIVIDER
   arr[1] =
     utils.pad('No.', 6) +
     utils.pad('Instrument', 15) +
@@ -30,7 +30,7 @@ function headerInfo() {
     utils.pad('Net chg.', 12, true) +
     utils.pad('Day chg.', 12, true)
 
-  arr[2] = LINE
+  arr[2] = DIVIDER
 
   return arr
 }
@@ -73,10 +73,10 @@ test('Delete summary.txt content', () => {
 })
 
 config.users.forEach((user) => {
-  test(`@holdings [${user.name}] [@kcid${user.id}]`, async ({ kiteAPI }) => {
+  test(`@holdings [${user.name}] [@kcid${user.kcid}]`, async ({ kiteAPI }) => {
     let data = []
 
-    const holdings = await (await kiteAPI.getHoldings(user.id)).data.data
+    const holdings = await (await kiteAPI.getHoldings(user.kcid)).data.data
 
     holdings.forEach((row) => {
       const d = {
@@ -110,7 +110,7 @@ config.users.forEach((user) => {
     // Table Headerconsole.log(headerInfo().join('\n'))
 
     console.log(
-      `\nEquity Holdings [${user.name.toUpperCase()}] [id: ${user.id}] [capital: ${utils.formatIndianNumber(user.capital)}]`,
+      `\nEquity Holdings [${user.name.toUpperCase()}] [id: ${user.kcid}] [capital: ${utils.formatIndianNumber(user.capital)}]`,
     )
 
     console.log(headerInfo().join('\n'))
@@ -123,7 +123,7 @@ config.users.forEach((user) => {
       if (row.profit > 0) profitSum += row.profit
     })
 
-    console.log(LINE)
+    console.log(DIVIDER)
     console.log(`Sum of Profits: ${utils.formatIndianNumber(profitSum)}\n\n`)
   })
 })

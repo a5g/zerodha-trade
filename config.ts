@@ -1,4 +1,4 @@
-const users = require('./users.json')
+import users from './users'
 
 export const ACTIVE_USER = 1
 
