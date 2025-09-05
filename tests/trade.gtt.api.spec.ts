@@ -1,7 +1,3 @@
-import { chromium } from 'playwright'
-
-import { expect } from '@playwright/test'
-
 import { test } from '../fixtures/auto.test'
 import orders from '../data/trade-data-api'
 import { utils } from '../utils/utils'
