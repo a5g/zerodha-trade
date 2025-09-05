@@ -50,10 +50,10 @@ function printRow(row: any, index) {
     utils.pad(utils.formatIndianNumber(row.invested), 12, true) +
     utils.pad(utils.formatIndianNumber(row.currValue), 12, true)
 
-  rowInfo += row.profit > 0 ? green : red
+  // rowInfo += row.profit > 0 ? green : red
   rowInfo += utils.pad(utils.formatIndianNumber(row.profit), 12, true)
 
-  rowInfo += row.netChange > 0 ? green : red
+  // rowInfo += row.netChange > 0 ? green : red
   rowInfo +=
     utils.pad(`${utils.formatIndianNumber(row.netChange, true)}%`, 12, true) +
     reset
