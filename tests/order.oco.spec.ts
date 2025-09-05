@@ -13,7 +13,7 @@ const DIVIDER =
   '-------------------------------------------------------------------------------------------------------'
 function headerInfo() {
   const arr = []
-  arr[0] = `\n\nBelow OCO orders have been executed for [${utils.kiteuser().name}] [capital: ${utils.kiteuser().capital.toLocaleString('en-IN')}]`
+  arr[0] = `\n\nBelow OCO orders have been executed for [${utils.kiteuser().name}] [kcid: ${utils.kiteuser().kcid}] [capital: ${utils.kiteuser().capital.toLocaleString('en-IN')}]`
   arr[1] = DIVIDER
 
   arr[2] =
@@ -55,7 +55,7 @@ test('Delete summary.txt content', () => {
   })
 })
 
-test.describe(`OCO Order`, () => {
+test.describe(`OCO`, () => {
   test.use({ storageState: `.auth/${utils.kiteuser().kcid}.json` })
   test.afterAll(() => {
     // print the final summary
@@ -109,12 +109,34 @@ test.describe(`OCO Order`, () => {
   })
 })
 
-test.describe(`OCO Order Cancel`, () => {
+test.describe(`OCO`, () => {
+  const symbols = []
+
+  test.afterAll(() => {
+    const arr = []
+    arr[0] = `\n\nBelow OCO cancel orders have been executed for [${utils.kiteuser().name}] [kcid: ${utils.kiteuser().kcid}]`
+    arr[1] = '----------------------'
+    arr[2] = utils.pad('No.', 5) + utils.pad('Stock', 15)
+    arr[3] = '----------------------'
+
+    // print the final summary
+    // Table Header
+    console.log(arr.join('\n'))
+
+    // Table Rows
+    symbols.forEach((symbol, index) => {
+      console.log(utils.pad(index + 1, 5) + utils.pad(symbol, 15))
+    })
+
+    console.log(arr[1])
+  })
+
   orders.forEach((order, index) => {
     test(`@oco_cancel [${order.tradingSymbol}] [${index + 1}]`, async ({
       kiteAPI,
     }) => {
       const activeGTT = await kiteAPI.getOCOActiveOrders(order.tradingSymbol)
+      symbols.push(order.tradingSymbol)
 
       for (const order of activeGTT) {
         await kiteAPI.cancelGTTOrder(order.id)

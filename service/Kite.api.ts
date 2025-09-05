@@ -333,12 +333,12 @@ export class KiteAPI extends API {
     return super.get(request)
   }
 
-  public async getPositions() {
+  public async getPositions(id: number = 1) {
     const request: any = {
       url: `${config.apiHost}/oms/portfolio/positions`,
       method: 'GET',
       headers: {
-        Authorization: `enctoken ${cookies[utils.kiteuser().kcid]}`,
+        Authorization: `enctoken ${cookies[id]}`,
       },
     }
 

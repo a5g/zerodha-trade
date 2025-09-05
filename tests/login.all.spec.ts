@@ -5,7 +5,7 @@ const users = config.users
 
 test.describe('Kite Login', () => {
   for (let i = 0; i < users.length; i += 1) {
-    test(`[${users[i].name}] [id: ${users[i].kcid}]`, async ({ kite }) => {
+    test(`[${users[i].name}] [kcid: ${users[i].kcid}]`, async ({ kite }) => {
       await kite.removeSession(users[i].kcid.toString())
       await kite.gotoKite()
       await kite.login(

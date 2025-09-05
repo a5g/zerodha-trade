@@ -13,7 +13,7 @@ const DIVIDER =
 
 function headerInfo() {
   const arr = []
-  arr[0] = `\n\nBelow GTT orders have been executed for [${utils.kiteuser().name}] [capital: ${utils.kiteuser().capital.toLocaleString('en-IN')}]`
+  arr[0] = `\n\nBelow GTT orders have been executed for [${utils.kiteuser().name}] [kcid: ${utils.kiteuser().kcid}] [capital: ${utils.kiteuser().capital.toLocaleString('en-IN')}]`
   arr[1] = DIVIDER
   arr[2] =
     utils.pad('No.', 5) +
@@ -37,7 +37,7 @@ function printRow(row: any, index) {
   const rowInfo =
     utils.pad(index + 1, 5) +
     utils.pad(row.tradingSymbol, 15) +
-    utils.pad(utils.formatIndianNumber(row.ltp), 10, true) +
+    utils.pad(utils.formatIndianNumber(row.ltp, true), 10, true) +
     utils.pad(row.buyPrice > 0 ? 'Buy' : 'Sell', 10, true) +
     utils.pad(utils.formatIndianNumber(row.qty), 10, true) +
     utils.pad(
@@ -72,7 +72,7 @@ test('Delete summary.txt content', () => {
   })
 })
 
-test.describe(`GTT Order`, () => {
+test.describe(`GTT`, () => {
   test.afterAll(() => {
     // print the final summary
     // Table Header
@@ -151,12 +151,34 @@ test.describe(`GTT Order`, () => {
   })
 })
 
-test.describe(`GTT Order Cancel`, () => {
+test.describe(`GTT`, () => {
+  const symbols = []
+
+  test.afterAll(() => {
+    const arr = []
+    arr[0] = `\n\nBelow GTT cancel orders have been executed for [${utils.kiteuser().name}] [kcid: ${utils.kiteuser().kcid}]`
+    arr[1] = '----------------------'
+    arr[2] = utils.pad('No.', 5) + utils.pad('Stock', 15)
+    arr[3] = '----------------------'
+
+    // print the final summary
+    // Table Header
+    console.log(arr.join('\n'))
+
+    // Table Rows
+    symbols.forEach((symbol, index) => {
+      console.log(utils.pad(index + 1, 5) + utils.pad(symbol, 15))
+    })
+
+    console.log(arr[1])
+  })
+
   orders.forEach((order, index) => {
     test(`@gtt_cancel [${order.tradingSymbol}] [${index + 1}]`, async ({
       kiteAPI,
     }) => {
       const activeGTT = await kiteAPI.getGTTActiveOrders(order.tradingSymbol)
+      symbols.push(order.tradingSymbol)
 
       for (const order of activeGTT) {
         await kiteAPI.cancelGTTOrder(order.id)

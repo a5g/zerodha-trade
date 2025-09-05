@@ -10,7 +10,8 @@ const filePath = 'summary.txt'
 // ANSI escape codes for text color
 const red = '\x1b[38;2;255;0;0m'
 const green = '\x1b[38;2;0;255;0m'
-// const blue = '\x1b[34m'
+const blue = '\x1b[38;2;0;125;255m'
+const yellow = '\x1b[38;2;255;255;0m'
 const reset = '\x1b[0m' // Resets text color to default
 
 const DIVIDER =
@@ -37,7 +38,10 @@ function headerInfo() {
 
 function printRow(row: any, index) {
   let rowInfo = utils.pad(index + 1, 6)
-  rowInfo += row.netChange > 0 ? green : red
+
+  if (row.netChange === 0) rowInfo += blue
+  else rowInfo += row.netChange > 0 ? green : red
+
   rowInfo += utils.pad(row.tradingSymbol, 15)
   rowInfo +=
     utils.pad(utils.formatIndianNumber(row.qty), 10, true) +
@@ -92,9 +96,12 @@ config.users.forEach((user) => {
         color: 'green',
       }
       d.profit = d.currValue - d.invested
-      d.netChange = (d.currValue / d.invested - 1) * 100
+
+      if (d.invested > 0 && d.currValue > 0)
+        d.netChange = (d.currValue / d.invested - 1) * 100
 
       if (d.netChange < 0) d.color = 'red'
+      if (d.netChange === 0) d.color = 'blue'
 
       data.push(d)
       // console.log(`${green}${row.tradingsymbol}${reset}`)
@@ -110,7 +117,7 @@ config.users.forEach((user) => {
     // Table Headerconsole.log(headerInfo().join('\n'))
 
     console.log(
-      `\nEquity Holdings [${user.name.toUpperCase()}] [id: ${user.kcid}] [capital: ${utils.formatIndianNumber(user.capital)}]`,
+      `\nEquity Holdings [${user.name.toUpperCase()}] [kcid: ${user.kcid}] [capital: ${utils.formatIndianNumber(user.capital)}]`,
     )
 
     console.log(headerInfo().join('\n'))
