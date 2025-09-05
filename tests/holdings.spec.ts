@@ -81,11 +81,11 @@ config.users.forEach((user) => {
     holdings.forEach((row) => {
       const d = {
         tradingSymbol: row.tradingsymbol,
-        qty: row.quantity,
+        qty: row.quantity + row.t1_quantity,
         avgPrice: row.average_price,
         ltp: row.last_price,
-        invested: row.quantity * row.average_price,
-        currValue: row.quantity * row.last_price,
+        invested: (row.quantity + row.t1_quantity) * row.average_price,
+        currValue: (row.quantity + row.t1_quantity) * row.last_price,
         profit: 0,
         netChange: 0,
         dayChange: row.day_change_percentage,
