@@ -320,4 +320,28 @@ export class KiteAPI extends API {
 
     return super.delete(request)
   }
+
+  public async getHoldings(id: number = 1) {
+    const request: any = {
+      url: `${config.apiHost}/oms/portfolio/holdings`,
+      method: 'GET',
+      headers: {
+        Authorization: `enctoken ${cookies[id]}`,
+      },
+    }
+
+    return super.get(request)
+  }
+
+  public async getPositions() {
+    const request: any = {
+      url: `${config.apiHost}/oms/portfolio/positions`,
+      method: 'GET',
+      headers: {
+        Authorization: `enctoken ${cookies[utils.kiteuser().id]}`,
+      },
+    }
+
+    return super.get(request)
+  }
 }

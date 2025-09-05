@@ -270,26 +270,92 @@ export class Utils {
     return parseFloat(cagrPercentage)
   }
 
-  formatIndianNumber(number) {
-    // Convert the number to a string
-    const numberString = number.toString()
+  formatIndianNumber(
+    value: number | string,
+    printDecimal: boolean = false,
+    fractionDigits: number = 2,
+    rounding: 'round' | 'floor' | 'ceil' = 'round',
+  ): string {
+    if (value === null || value === undefined || value === '') {
+      return printDecimal ? `0.${'0'.repeat(fractionDigits)}` : '0'
+    }
 
-    // Split the number into integer and decimal parts
-    const [integerPart, decimalPart] = numberString.split('.')
+    // Accept strings like "3,05,369" too
+    const num =
+      typeof value === 'number'
+        ? value
+        : Number(String(value).replace(/,/g, ''))
+    if (Number.isNaN(num)) return String(value)
 
-    // Format the integer part with commas for lakh and crore separators
-    const formattedIntegerPart = integerPart.replace(
-      /\B(?=(\d{3})+(?!\d))/g,
-      ',',
-    )
+    const sign = num < 0 ? '-' : ''
+    const abs = Math.abs(num)
 
-    // Combine the formatted integer part and the decimal part
-    const formattedNumber = decimalPart
-      ? `${formattedIntegerPart}.${decimalPart}`
-      : formattedIntegerPart
+    // Fix decimals with chosen rounding
+    const factor = Math.pow(10, fractionDigits)
+    let fixed: string
+    if (printDecimal) {
+      const scaled =
+        rounding === 'floor'
+          ? Math.floor(abs * factor)
+          : rounding === 'ceil'
+            ? Math.ceil(abs * factor)
+            : Math.round(abs * factor)
+      fixed = (scaled / factor).toFixed(fractionDigits) // keeps trailing zeros
+    } else {
+      fixed = Math.trunc(abs).toString()
+    }
 
-    return formattedNumber
+    let [intPart, decPart = ''] = fixed.split('.')
+
+    // Indian grouping: last 3 digits, then groups of 2
+    if (intPart.length > 3) {
+      const last3 = intPart.slice(-3)
+      const rest = intPart.slice(0, -3)
+      intPart = rest.replace(/\B(?=(\d{2})+(?!\d))/g, ',') + ',' + last3
+    }
+
+    return sign + intPart + (printDecimal ? '.' + decPart : '')
   }
+
+  // formatIndianNumber(number, printDecimal: boolean = true) {
+  //   // Convert the number to a string
+  //   const numberString = number.toString()
+
+  //   // Split the number into integer and decimal parts
+  //   const [integerPart, decimalPart] = numberString.split('.')
+
+  //   // Format the integer part with commas for lakh and crore separators
+  //   const formattedIntegerPart = integerPart.replace(
+  //     /\B(?=(\d{3})+(?!\d))/g,
+  //     ',',
+  //   )
+
+  //   // console.log(decimalPart)
+
+  //   let d = decimalPart
+  //   if (decimalPart !== undefined) {
+  //     d = decimalPart.substring(0, 2)
+  //     if (d < 10 && d[0] !== '0') d += '0'
+  //   }
+  //   // Combine the formatted integer part and the decimal part
+  //   const formattedNumber =
+  //     decimalPart && printDecimal
+  //       ? `${formattedIntegerPart}.${d}`
+  //       : formattedIntegerPart
+
+  //   // num.toLocaleString("en-IN");
+
+  //   const num = Number(formattedNumber.replace(/,/g, ''))
+  //   const formatted = num.toLocaleString('en-IN')
+
+  //   if (formatted.indexOf('.') > -1) {
+  //     let dec = formatted.split('.')[1]
+  //     dec = dec.length === 1 ? `.${dec}0` : `.${dec}`
+
+  //     return `${formatted.split('.')[0]}${dec}`
+  //   }
+  //   return formatted
+  // }
 
   async readCSVData(myCSVFilePath: string): Promise<any> {
     return csv()

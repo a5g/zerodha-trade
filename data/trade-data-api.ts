@@ -1,11 +1,13 @@
 export default [
   {
     "exchange": "NSE",
-    "tradingSymbol": "TCS",
+    "tradingSymbol": "QPOWER",
     "ltp": null,
-    "qty": 50,
-    "buyPrice": 2800,
-    "stoplossPrice": 2716,
-    "targetPrice": 3360
+    "qty": 0,
+    "buyPrice": 934.55,
+    "sellPrice": 861.95,
+    "profitPercent": -7.77,
+    "tradeRisk": 0.5,
+    "positionSize": 6.44
   }
 ]

@@ -38,7 +38,14 @@
     "reg3": "npm run pull-data && export kcid=3 && npx playwright test tests/trade.reg.api.spec.ts -g reg_order",
     "reg4": "npm run pull-data && export kcid=4 && npx playwright test tests/trade.reg.api.spec.ts -g reg_order",
     "reg5": "npm run pull-data && export kcid=5 && npx playwright test tests/trade.reg.api.spec.ts -g reg_order",
-    "regcancel": "npm run pull-data && npx playwright test tests/trade.reg.api.spec.ts -g reg_cancel"
+    "regcancel": "npm run pull-data && npx playwright test tests/trade.reg.api.spec.ts -g reg_cancel",
+    "summary": "npx playwright test tests/holdings.spec.ts -g holdings",
+    "summary1": "export kcid=1 && npx playwright test tests/holdings.spec.ts -g kcid1",
+    "summary2": "export kcid=2 && npx playwright test tests/holdings.spec.ts -g kcid2",
+    "summary3": "export kcid=3 && npx playwright test tests/holdings.spec.ts -g kcid3",
+    "summary4": "export kcid=4 && npx playwright test tests/holdings.spec.ts -g kcid4",
+    "summary5": "export kcid=5 && npx playwright test tests/holdings.spec.ts -g kcid5",
+    "summary6": "export kcid=6 && npx playwright test tests/holdings.spec.ts -g kcid6"
   },
   "keywords": [],
   "author": "",

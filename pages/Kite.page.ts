@@ -162,7 +162,8 @@ export default class KitePage {
     try {
       await this.riskDialogIUnderstandButton.click({ timeout: 100 })
     } catch (e) {
-      console.log('Could not find investor risk dialog')
+      await this.page.mouse.click(200, 300)
+      // console.log('Could not find investor risk dialog')
     }
   }
 
@@ -213,6 +214,7 @@ export default class KitePage {
 
   public async getLTP(exchange, tradingSymbol) {
     await this.page.goto(`${config.baseURL}`)
+    await this.acceptRisk()
     // await this.page.getByRole('tab', { name: '7' }).click()
 
     await this.searchText.fill(tradingSymbol)
@@ -232,6 +234,49 @@ export default class KitePage {
     ).textContent()
     ltp = ltp.substring(1, ltp.length).replace(/,/, '')
 
+    return ltp
+  }
+
+  public async getLTPFromNSE(tradingSymbol: string) {
+    console.log('getting data from NSE')
+
+    const start = Date.now()
+
+    await this.page.setUserAgent(
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ' +
+        '(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    )
+    // Set headers like a real browser
+    await this.page.setExtraHTTPHeaders({
+      'accept-language': 'en-US,en;q=0.9',
+    })
+
+    // await this.page.goto(
+    //   `https://www.nseindia.com/get-quotes/equity?symbol=${tradingSymbol}`,
+    //   {
+    //     waitUntil: 'domcontentloaded',
+    //   },
+    // )
+
+    // NSE sometimes requires visiting homepage first to set cookies
+    // (important step!)
+    await this.page.goto('https://www.nseindia.com', {
+      waitUntil: 'domcontentloaded',
+    })
+    await this.page.goto(
+      `https://www.nseindia.com/get-quotes/equity?symbol=${tradingSymbol}`,
+    )
+
+    await this.page.waitForFunction(() =>
+      document.querySelector(`span#quoteLtp`).textContent.includes('.'),
+    )
+
+    let ltp = await (await this.page.$(`span#quoteLtp`)).textContent()
+    ltp = ltp.replace(/,/, '')
+
+    const end = Date.now()
+
+    console.log(`Time taken: ${end - start} ms`)
     return ltp
   }
 

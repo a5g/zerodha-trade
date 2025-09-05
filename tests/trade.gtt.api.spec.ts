@@ -1,3 +1,7 @@
+import { chromium } from 'playwright'
+
+import { expect } from '@playwright/test'
+
 import { test } from '../fixtures/auto.test'
 import orders from '../data/trade-data-api'
 import { utils } from '../utils/utils'
@@ -100,7 +104,10 @@ test.describe(`GTT`, () => {
       kite,
     }) => {
       let sellFlag = true
-      const LTP = await kite.getLTP(order.exchange, order.tradingSymbol)
+
+      const ltp = await kite.getLTP(order.exchange, order.tradingSymbol)
+
+      console.log(`Stock: ${order.tradingSymbol}\nPrice: ${ltp}`)
 
       // buy
       const data = {
@@ -108,7 +115,7 @@ test.describe(`GTT`, () => {
         userid: utils.kiteuser().id,
         exchange: order.exchange,
         tradingSymbol: order.tradingSymbol,
-        lastPrice: LTP,
+        lastPrice: ltp,
         qty: order.qty,
         buyPrice: order.buyPrice,
         sellPrice: order.sellPrice,
