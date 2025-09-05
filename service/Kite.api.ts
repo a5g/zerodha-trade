@@ -6,7 +6,7 @@ import config from '../config'
 import { utils } from '../utils/utils'
 // const qs = require('qs')
 
-const cookies = require('../.auth/cookies.json')
+const cookies = require('../cookies.json')
 
 export class KiteAPI extends API {
   request: APIRequestContext

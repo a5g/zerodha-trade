@@ -1,12 +1,12 @@
 // import fs from 'fs'
-import { Page, expect } from '@playwright/test'
+import { Page } from '@playwright/test'
 import config from '../config'
 
 const XLSX = require('xlsx')
 const fs = require('fs')
-const file = require('../.auth/cookies.json')
+const file = require('../cookies.json')
 
-const fileName = '../.auth/cookies.json'
+// const fileName = '../cookies.json'
 // const csv = require('csv-parser')
 
 export default class KitePage {
@@ -144,13 +144,9 @@ export default class KitePage {
 
     file[name] = enctoken
 
-    fs.writeFile(
-      '.auth/cookies.json',
-      JSON.stringify(file),
-      function writeJSON(err) {
-        if (err) return console.log(err)
-      },
-    )
+    fs.writeFile('cookies.json', JSON.stringify(file), function writeJSON(err) {
+      if (err) return console.log(err)
+    })
   }
 
   public async gotoKite(path: string = '/') {
@@ -215,8 +211,6 @@ export default class KitePage {
   public async getLTP(exchange, tradingSymbol) {
     await this.page.goto(`${config.baseURL}`)
     await this.acceptRisk()
-    // await this.page.getByRole('tab', { name: '7' }).click()
-
     await this.searchText.fill(tradingSymbol)
     await this.searchResultsFirstItem.hover()
     await this.buyBtn.click()
@@ -234,49 +228,6 @@ export default class KitePage {
     ).textContent()
     ltp = ltp.substring(1, ltp.length).replace(/,/, '')
 
-    return ltp
-  }
-
-  public async getLTPFromNSE(tradingSymbol: string) {
-    console.log('getting data from NSE')
-
-    const start = Date.now()
-
-    await this.page.setUserAgent(
-      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ' +
-        '(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-    )
-    // Set headers like a real browser
-    await this.page.setExtraHTTPHeaders({
-      'accept-language': 'en-US,en;q=0.9',
-    })
-
-    // await this.page.goto(
-    //   `https://www.nseindia.com/get-quotes/equity?symbol=${tradingSymbol}`,
-    //   {
-    //     waitUntil: 'domcontentloaded',
-    //   },
-    // )
-
-    // NSE sometimes requires visiting homepage first to set cookies
-    // (important step!)
-    await this.page.goto('https://www.nseindia.com', {
-      waitUntil: 'domcontentloaded',
-    })
-    await this.page.goto(
-      `https://www.nseindia.com/get-quotes/equity?symbol=${tradingSymbol}`,
-    )
-
-    await this.page.waitForFunction(() =>
-      document.querySelector(`span#quoteLtp`).textContent.includes('.'),
-    )
-
-    let ltp = await (await this.page.$(`span#quoteLtp`)).textContent()
-    ltp = ltp.replace(/,/, '')
-
-    const end = Date.now()
-
-    console.log(`Time taken: ${end - start} ms`)
     return ltp
   }
 
@@ -360,10 +311,6 @@ export default class KitePage {
     await this.page.waitForTimeout(500)
     await this.page.getByRole('button', { name: 'Place' }).click()
     await this.page.waitForTimeout(1000)
-
-    // await this.page.screenshot({
-    //   path: `screenshots/gtt-${type.toLowerCase()}-/${stock}.png`,
-    // })
   }
 
   public async pause() {
