@@ -8,7 +8,8 @@ const fs = require('fs')
 const filePath = 'summary.txt'
 
 // ANSI escape codes for text color
-const red = '\x1b[38;2;255;0;0m'
+// const darkred = '\x1b[38;2;255;0;0m'
+const red = '\x1b[38;2;255;102;102m'
 const green = '\x1b[38;2;0;255;0m'
 const blue = '\x1b[38;2;0;125;255m'
 const yellow = '\x1b[38;2;255;255;0m'

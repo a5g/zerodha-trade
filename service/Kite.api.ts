@@ -344,4 +344,61 @@ export class KiteAPI extends API {
 
     return super.get(request)
   }
+
+  public async placeAlert(order: any) {
+    const data = qs.stringify({
+      name: order.tradingSymbol,
+      lhs_exchange: order.exchange,
+      lhs_tradingsymbol: order.tradingSymbol,
+      lhs_attribute: 'LastTradedPrice',
+      operator: order.operator,
+      rhs_type: 'constant',
+      type: 'simple',
+      rhs_constant: order.alertPrice,
+    })
+
+    const request: any = {
+      url: `${config.apiHost}/oms/alerts`,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization: `enctoken ${cookies[utils.kiteuser().kcid]}`,
+      },
+      data,
+    }
+
+    return super.post(request)
+  }
+
+  public async getActiveAlerts(tradingSymbol: string = '') {
+    const request: any = {
+      url: `${config.apiHost}/oms/alerts`,
+      method: 'GET',
+      headers: {
+        Authorization: `enctoken ${cookies[utils.kiteuser().kcid]}`,
+      },
+    }
+
+    const alerts: any = await super.get(request)
+
+    if (tradingSymbol !== '') {
+      return alerts.data.data.filter(
+        (alert) => alert.lhs_tradingsymbol === tradingSymbol,
+      )
+    }
+
+    return []
+  }
+
+  public async cancelAlert(uuid: number) {
+    const request: any = {
+      url: `${config.apiHost}/oms/alerts?uuid=${uuid}`,
+      method: 'DELETE',
+      headers: {
+        Authorization: `enctoken ${cookies[utils.kiteuser().kcid]}`,
+      },
+    }
+
+    return super.delete(request)
+  }
 }

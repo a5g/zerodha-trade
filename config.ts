@@ -8,4 +8,5 @@ export default {
   kcid: parseInt(process.env.kcid, 10) || 1,
   holdingsOrder: process.env.holdingsOrder || 'net',
   users,
+  datasheetURL: '',
 }

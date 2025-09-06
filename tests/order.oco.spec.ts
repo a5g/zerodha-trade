@@ -13,12 +13,12 @@ const DIVIDER =
   '-------------------------------------------------------------------------------------------------------'
 function headerInfo() {
   const arr = []
-  arr[0] = `\n\nBelow OCO orders have been executed for [${utils.kiteuser().name}] [kcid: ${utils.kiteuser().kcid}] [capital: ${utils.kiteuser().capital.toLocaleString('en-IN')}]`
+  arr[0] = `\n\nOCO Orders for below instruments have been deleted for [${utils.kiteuser().name}] [kcid: ${utils.kiteuser().kcid}] [capital: ${utils.kiteuser().capital.toLocaleString('en-IN')}]`
   arr[1] = DIVIDER
 
   arr[2] =
     utils.pad('No.', 5) +
-    utils.pad('Stock', 15) +
+    utils.pad('Instrument', 15) +
     utils.pad('LTP', 10, true) +
     utils.pad('Type', 15, true) +
     utils.pad('Qty', 12, true) +
@@ -114,9 +114,9 @@ test.describe(`OCO`, () => {
 
   test.afterAll(() => {
     const arr = []
-    arr[0] = `\n\nBelow OCO cancel orders have been executed for [${utils.kiteuser().name}] [kcid: ${utils.kiteuser().kcid}]`
+    arr[0] = `\n\nBelow OCO orders have been cancelled for [${utils.kiteuser().name}] [kcid: ${utils.kiteuser().kcid}]`
     arr[1] = '----------------------'
-    arr[2] = utils.pad('No.', 5) + utils.pad('Stock', 15)
+    arr[2] = utils.pad('No.', 5) + utils.pad('Instrument', 15)
     arr[3] = '----------------------'
 
     // print the final summary
