@@ -4,9 +4,11 @@ import qs from 'qs'
 import { API } from './index'
 import config from '../config'
 import { utils } from '../utils/utils'
-// const qs = require('qs')
 
 const cookies = require('../cookies.json')
+
+const BUY_PRICE_INCREASE = 1.0025
+const SELL_PRICE_DECREASE = 0.9975
 
 export class KiteAPI extends API {
   request: APIRequestContext
@@ -44,10 +46,10 @@ export class KiteAPI extends API {
       order.transactionType === 'BUY' ? order.buyPrice : order.sellPrice
     const price =
       order.transactionType === 'BUY'
-        ? utils.zerodaPriceFormat(order.buyPrice * 1.005)
-        : utils.zerodaPriceFormat(order.sellPrice * 0.995)
+        ? utils.zerodaPriceFormat(order.buyPrice * BUY_PRICE_INCREASE)
+        : utils.zerodaPriceFormat(order.sellPrice * SELL_PRICE_DECREASE)
 
-    const LAST_PRICE = utils.zerodaPriceFormat(triggerPrice * 0.99)
+    // const LAST_PRICE = utils.zerodaPriceFormat(triggerPrice * 0.99)
 
     const data = qs.stringify({
       condition: `{"exchange":"${order.exchange}","tradingsymbol":"${order.tradingSymbol}","trigger_values":[${triggerPrice}],"last_price":${order.ltp}}`,
@@ -61,9 +63,13 @@ export class KiteAPI extends API {
 
   public getOCOOrderData(order: any) {
     const stoplossTriggerPrice = utils.zerodaPriceFormat(order.stoplossPrice)
-    const stoplossPrice = utils.zerodaPriceFormat(order.stoplossPrice * 0.995)
+    const stoplossPrice = utils.zerodaPriceFormat(
+      order.stoplossPrice * SELL_PRICE_DECREASE,
+    )
     const targetTriggerPrice = utils.zerodaPriceFormat(order.targetPrice)
-    const targetPrice = utils.zerodaPriceFormat(order.targetPrice * 0.995)
+    const targetPrice = utils.zerodaPriceFormat(
+      order.targetPrice * SELL_PRICE_DECREASE,
+    )
 
     const data = qs.stringify({
       condition: `{"exchange":"${order.exchange}","tradingsymbol":"${order.tradingSymbol}","trigger_values":[${stoplossTriggerPrice}, ${targetTriggerPrice}],"last_price":${order.ltp}}`,
@@ -73,10 +79,6 @@ export class KiteAPI extends API {
     })
 
     return data
-
-    // {"exchange":"NSE","tradingsymbol":"IXIGO","trigger_values":[249.9,319.35],"last_price":277.7}
-    // [{"exchange":"NSE","tradingsymbol":"IXIGO","transaction_type":"SELL","quantity":1,"price":263.8,"order_type":"LIMIT","product":"CNC"},{"exchange":"NSE","tradingsymbol":"IXIGO","transaction_type":"SELL","quantity":1,"price":291.55,"order_type":"LIMIT","product":"CNC"}]
-    // two-leg
   }
 
   public async getLTP({ exchange, tradingsymbol }) {

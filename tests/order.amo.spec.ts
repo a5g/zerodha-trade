@@ -94,7 +94,9 @@ test.describe(`AMO`, () => {
       kiteAPI,
       kite,
     }) => {
-      const ltp = await kite.getLTP(order.exchange, order.tradingSymbol)
+      let ltp = order.ltp
+      if (ltp === 0)
+        ltp = await kite.getLTP(order.exchange, order.tradingSymbol)
 
       // buy
       const data = {

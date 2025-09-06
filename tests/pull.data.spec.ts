@@ -3,7 +3,7 @@ import { test } from '../fixtures/auto.test'
 test(`Pull order data from local excel file`, async ({ utils }) => {
   // from local file
   const tdata = utils
-    .readDataFromXLSX('./data/trade-data-api.xlsx', 'DATA')
+    .readDataFromXLSX('./data/trade-data-api.xlsx', 'GTT')
     .filter((row) => row.trading_symbol !== undefined)
 
   const parsedData = tdata

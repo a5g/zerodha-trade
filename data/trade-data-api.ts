@@ -1,26 +1,24 @@
 export default [
   {
     "exchange": "NSE",
-    "tradingSymbol": "IXIGO",
-    "alertPrice": 1280,
-    "condition": ">="
+    "tradingSymbol": "POCL",
+    "ltp": null,
+    "qty": 20,
+    "buyPrice": 0,
+    "sellPrice": 1190,
+    "profitPercent": 0,
+    "tradeRisk": 0.5,
+    "positionSize": 0
   },
   {
     "exchange": "NSE",
-    "tradingSymbol": "GARUDA",
-    "alertPrice": 880,
-    "condition": ">="
-  },
-  {
-    "exchange": "NSE",
-    "tradingSymbol": "HLEGLAS",
-    "alertPrice": 610,
-    "condition": ">"
-  },
-  {
-    "exchange": "NSE",
-    "tradingSymbol": "KAYNES",
-    "alertPrice": 7000,
-    "condition": "EQ"
+    "tradingSymbol": "HYUNDAI",
+    "ltp": null,
+    "qty": 20,
+    "buyPrice": 0,
+    "sellPrice": 2350,
+    "profitPercent": 0,
+    "tradeRisk": 0.5,
+    "positionSize": 0
   }
 ]
