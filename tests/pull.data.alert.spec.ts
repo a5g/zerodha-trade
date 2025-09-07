@@ -16,6 +16,10 @@ test(`Pull order data from local excel file`, async ({ utils }) => {
         ? 0
         : utils.formatFloat(item.alert_price),
       condition: utils.isEmpty(item.condition) ? '' : item.condition,
+      ltp:
+        item.ltp === '' || item.ltp === null || item.ltp === undefined
+          ? 0
+          : parseFloat(item.ltp),
     }))
     .filter((row) => row.tradingSymbol.trim() !== '')
 

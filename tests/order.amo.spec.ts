@@ -89,7 +89,7 @@ test.describe(`AMO`, () => {
   })
 
   orders.forEach((order, index) => {
-    test.use({ storageState: `.auth/${utils.kiteuser().kcid}.json` })
+    // test.use({ storageState: `.auth/${utils.kiteuser().kcid}.json` })
     test(`@amo_order ${order.tradingSymbol} [${index + 1}]`, async ({
       kiteAPI,
       kite,
@@ -177,16 +177,21 @@ test.describe(`AMO`, () => {
     console.log(arr[1])
   })
 
-  orders.forEach((order, index) => {
-    test(`@amo_cancel [${order.tradingSymbol}] [${index + 1}]`, async ({
-      kiteAPI,
-    }) => {
-      const openOrders = await kiteAPI.getAMOOpenOrders(order.tradingSymbol)
-      symbols.push(order.tradingSymbol)
+  orders
+    .filter(
+      (item, index, self) =>
+        index === self.findIndex((t) => t.tradingSymbol === item.tradingSymbol),
+    )
+    .forEach((order, index) => {
+      test(`@amo_cancel [${order.tradingSymbol}] [${index + 1}]`, async ({
+        kiteAPI,
+      }) => {
+        const openOrders = await kiteAPI.getAMOOpenOrders(order.tradingSymbol)
+        symbols.push(order.tradingSymbol)
 
-      for (const order of openOrders) {
-        await kiteAPI.cancelAMOOrder(order.order_id)
-      }
+        for (const order of openOrders) {
+          await kiteAPI.cancelAMOOrder(order.order_id)
+        }
+      })
     })
-  })
 })

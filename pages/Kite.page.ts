@@ -1,5 +1,5 @@
 // import fs from 'fs'
-import { Page } from '@playwright/test'
+import { expect, Page } from '@playwright/test'
 import config from '../config'
 
 const XLSX = require('xlsx')
@@ -229,6 +229,20 @@ export default class KitePage {
     ltp = ltp.substring(1, ltp.length).replace(/,/, '')
 
     return ltp
+  }
+
+  public async getLTPFromTV(exchange, tradingSymbol) {
+    await this.page.goto(
+      `https://in.tradingview.com/symbols/NSE-${tradingSymbol}/`,
+    )
+
+    const ltp = this.page.locator(
+      `//div[contains(@class, "quotesRow")]//span[contains(@class, "js-symbol-last")]`,
+    )
+    await expect(ltp).toContainText('.')
+    const txt = await ltp.textContent()
+
+    return txt.replace(/,/, '')
   }
 
   public async regularOrder(

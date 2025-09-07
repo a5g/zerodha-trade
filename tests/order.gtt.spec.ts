@@ -88,7 +88,7 @@ test.describe(`GTT`, () => {
   })
 
   orders.forEach((order, index) => {
-    test.use({ storageState: `.auth/${utils.kiteuser().kcid}.json` })
+    // test.use({ storageState: `.auth/${utils.kiteuser().kcid}.json` })
     test(`@gtt_order ${order.tradingSymbol} [${index + 1}]`, async ({
       kiteAPI,
       kite,
@@ -96,7 +96,9 @@ test.describe(`GTT`, () => {
       let sellFlag = true
       let ltp = order.ltp
       if (ltp === 0)
-        ltp = await kite.getLTP(order.exchange, order.tradingSymbol)
+        ltp = parseFloat(
+          await kite.getLTPFromTV(order.exchange, order.tradingSymbol),
+        )
 
       // buy
       const data = {
@@ -137,7 +139,7 @@ test.describe(`GTT`, () => {
           data.sellPrice = order.sellPrice
           data.transactionType = 'SELL'
 
-          await kiteAPI.placeGTT(data)
+          // await kiteAPI.placeGTT(data)
           const d = { ...data }
           d.buyPrice = 0
           placedOrder.push(d)
@@ -174,16 +176,21 @@ test.describe(`GTT`, () => {
     console.log(arr[1])
   })
 
-  orders.forEach((order, index) => {
-    test(`@gtt_cancel [${order.tradingSymbol}] [${index + 1}]`, async ({
-      kiteAPI,
-    }) => {
-      const activeGTT = await kiteAPI.getGTTActiveOrders(order.tradingSymbol)
-      symbols.push(order.tradingSymbol)
+  orders
+    .filter(
+      (item, index, self) =>
+        index === self.findIndex((t) => t.tradingSymbol === item.tradingSymbol),
+    )
+    .forEach((order, index) => {
+      test(`@gtt_cancel [${order.tradingSymbol}] [${index + 1}]`, async ({
+        kiteAPI,
+      }) => {
+        const activeGTT = await kiteAPI.getGTTActiveOrders(order.tradingSymbol)
+        symbols.push(order.tradingSymbol)
 
-      for (const order of activeGTT) {
-        await kiteAPI.cancelGTTOrder(order.id)
-      }
+        for (const order of activeGTT) {
+          await kiteAPI.cancelGTTOrder(order.id)
+        }
+      })
     })
-  })
 })

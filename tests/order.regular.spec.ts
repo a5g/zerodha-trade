@@ -74,7 +74,7 @@ test('Delete summary.txt content', () => {
 })
 
 test.describe(`Regular`, () => {
-  test.use({ storageState: `.auth/${utils.kiteuser().kcid}.json` })
+  // test.use({ storageState: `.auth/${utils.kiteuser().kcid}.json` })
   test.afterAll(() => {
     // print the final summary
     // Table Header
@@ -172,16 +172,23 @@ test.describe(`Regular`, () => {
     console.log(arr[1])
   })
 
-  orders.forEach((order, index) => {
-    test(`@reg_cancel [${order.tradingSymbol}] [${index + 1}]`, async ({
-      kiteAPI,
-    }) => {
-      const openOrders = await kiteAPI.getRegularOpenOrders(order.tradingSymbol)
-      symbols.push(order.tradingSymbol)
+  orders
+    .filter(
+      (item, index, self) =>
+        index === self.findIndex((t) => t.tradingSymbol === item.tradingSymbol),
+    )
+    .forEach((order, index) => {
+      test(`@reg_cancel [${order.tradingSymbol}] [${index + 1}]`, async ({
+        kiteAPI,
+      }) => {
+        const openOrders = await kiteAPI.getRegularOpenOrders(
+          order.tradingSymbol,
+        )
+        symbols.push(order.tradingSymbol)
 
-      for (const order of openOrders) {
-        await kiteAPI.cancelRegularOrder(order.order_id)
-      }
+        for (const order of openOrders) {
+          await kiteAPI.cancelRegularOrder(order.order_id)
+        }
+      })
     })
-  })
 })

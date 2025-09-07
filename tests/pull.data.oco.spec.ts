@@ -12,7 +12,10 @@ test(`Pull order data from local excel file`, async ({ utils }) => {
       tradingSymbol: utils.isEmpty(item.trading_symbol)
         ? ''
         : item.trading_symbol,
-      ltp: item.ltp === '' ? 0 : utils.formatFloat(item.ltp),
+      ltp:
+        item.ltp === '' || item.ltp === null || item.ltp === undefined
+          ? 0
+          : utils.formatIndianNumber(item.ltp),
       qty: utils.isEmpty(item.qty) ? 0 : parseInt(item.qty, 10),
       buyPrice: utils.isEmpty(item.buy_price)
         ? 0

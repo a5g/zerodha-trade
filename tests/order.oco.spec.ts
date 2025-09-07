@@ -56,7 +56,7 @@ test('Delete summary.txt content', () => {
 })
 
 test.describe(`OCO`, () => {
-  test.use({ storageState: `.auth/${utils.kiteuser().kcid}.json` })
+  // test.use({ storageState: `.auth/${utils.kiteuser().kcid}.json` })
   test.afterAll(() => {
     // print the final summary
     // Table Header
@@ -133,16 +133,21 @@ test.describe(`OCO`, () => {
     console.log(arr[1])
   })
 
-  orders.forEach((order, index) => {
-    test(`@oco_cancel [${order.tradingSymbol}] [${index + 1}]`, async ({
-      kiteAPI,
-    }) => {
-      const activeGTT = await kiteAPI.getOCOActiveOrders(order.tradingSymbol)
-      symbols.push(order.tradingSymbol)
+  orders
+    .filter(
+      (item, index, self) =>
+        index === self.findIndex((t) => t.tradingSymbol === item.tradingSymbol),
+    )
+    .forEach((order, index) => {
+      test(`@oco_cancel [${order.tradingSymbol}] [${index + 1}]`, async ({
+        kiteAPI,
+      }) => {
+        const activeGTT = await kiteAPI.getOCOActiveOrders(order.tradingSymbol)
+        symbols.push(order.tradingSymbol)
 
-      for (const order of activeGTT) {
-        await kiteAPI.cancelGTTOrder(order.id)
-      }
+        for (const order of activeGTT) {
+          await kiteAPI.cancelGTTOrder(order.id)
+        }
+      })
     })
-  })
 })

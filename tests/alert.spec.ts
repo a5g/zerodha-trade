@@ -50,13 +50,17 @@ test.describe(`ALERT`, () => {
   })
 
   orders.forEach((order, index) => {
-    test.use({ storageState: `.auth/${utils.kiteuser().kcid}.json` })
+    // test.use({ storageState: `.auth/${utils.kiteuser().kcid}.json` })
     test(`@alert_order ${order.tradingSymbol} [${index + 1}]`, async ({
       kiteAPI,
       kite,
     }) => {
       // let sellFlag = true
-      const ltp = await kite.getLTP(order.exchange, order.tradingSymbol)
+      let ltp = order.ltp
+      if (ltp === 0)
+        ltp = parseFloat(
+          await kite.getLTPFromTV(order.exchange, order.tradingSymbol),
+        )
 
       // alert
       const data = {
@@ -101,16 +105,21 @@ test.describe(`ALERT`, () => {
     console.log(arr[1])
   })
 
-  orders.forEach((order, index) => {
-    test(`@alert_cancel [${order.tradingSymbol}] [${index + 1}]`, async ({
-      kiteAPI,
-    }) => {
-      const activeAlerts = await kiteAPI.getActiveAlerts(order.tradingSymbol)
-      symbols.push(order.tradingSymbol)
+  orders
+    .filter(
+      (item, index, self) =>
+        index === self.findIndex((t) => t.tradingSymbol === item.tradingSymbol),
+    )
+    .forEach((order, index) => {
+      test(`@alert_cancel [${order.tradingSymbol}] [${index + 1}]`, async ({
+        kiteAPI,
+      }) => {
+        const activeAlerts = await kiteAPI.getActiveAlerts(order.tradingSymbol)
+        symbols.push(order.tradingSymbol)
 
-      for (const alert of activeAlerts) {
-        await kiteAPI.cancelAlert(alert.uuid)
-      }
+        for (const alert of activeAlerts) {
+          await kiteAPI.cancelAlert(alert.uuid)
+        }
+      })
     })
-  })
 })
