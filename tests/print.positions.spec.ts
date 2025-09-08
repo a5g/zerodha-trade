@@ -9,7 +9,7 @@ const filePath = 'summary.txt'
 // ANSI escape codes for text color
 const red = '\x1b[38;2;255;0;0m'
 const green = '\x1b[38;2;0;255;0m'
-const blue = '\x1b[34m'
+const blue = '\x1b[38;2;0;0;255m'
 const reset = '\x1b[0m' // Resets text color to default
 
 const DIVIDER =

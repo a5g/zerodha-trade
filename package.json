@@ -61,7 +61,8 @@
     "positions3": "export kcid=3 && npx playwright test tests/print.positions.spec.ts -g kcid3",
     "positions4": "export kcid=4 && npx playwright test tests/print.positions.spec.ts -g kcid4",
     "positions5": "export kcid=5 && npx playwright test tests/print.positions.spec.ts -g kcid5",
-    "summary": "npm run holdings5 && npm run positions5"
+    "summary": "npm run holdings && npm run positions",
+    "printgtt": "npx playwright test tests/print.gtt.spec.ts"
   },
   "keywords": [],
   "author": "",

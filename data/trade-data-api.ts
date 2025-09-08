@@ -1,30 +1,13 @@
 export default [
   {
     "exchange": "NSE",
-    "tradingSymbol": "HLEGLAS",
-    "alertPrice": 1500,
-    "condition": "EQ",
-    "ltp": 0
-  },
-  {
-    "exchange": "NSE",
-    "tradingSymbol": "CSBBANK",
-    "alertPrice": 855.2,
-    "condition": ">=",
-    "ltp": 0
-  },
-  {
-    "exchange": "NSE",
-    "tradingSymbol": "HLEGLAS",
-    "alertPrice": 1500,
-    "condition": "EQ",
-    "ltp": 0
-  },
-  {
-    "exchange": "NSE",
-    "tradingSymbol": "CSBBANK",
-    "alertPrice": 855.2,
-    "condition": ">=",
-    "ltp": 0
+    "tradingSymbol": "IOLCP",
+    "ltp": 0,
+    "qty": 462,
+    "buyPrice": 108,
+    "sellPrice": 0,
+    "profitPercent": 0,
+    "tradeRisk": 0.5,
+    "positionSize": 0
   }
 ]

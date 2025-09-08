@@ -78,7 +78,7 @@ test.describe(`OCO`, () => {
     }) => {
       let ltp = order.ltp
       if (ltp === 0)
-        ltp = await kite.getLTP(order.exchange, order.tradingSymbol)
+        ltp = await kite.getLTPFromTV(order.exchange, order.tradingSymbol)
 
       // buy
       const data = {

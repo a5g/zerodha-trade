@@ -13,6 +13,7 @@ const red = '\x1b[38;2;255;102;102m'
 const green = '\x1b[38;2;0;255;0m'
 const blue = '\x1b[38;2;0;125;255m'
 const yellow = '\x1b[38;2;255;255;0m'
+const cyan = '\x1b[38;2;0;255;255m'
 const reset = '\x1b[0m' // Resets text color to default
 
 const DIVIDER =
@@ -67,16 +68,6 @@ function printRow(row: any, index) {
   return rowInfo
 }
 
-test('Delete summary.txt content', () => {
-  fs.writeFile(filePath, headerInfo().join(`\n`), 'utf8', (err) => {
-    if (err) {
-      console.error('Error writing file:', err)
-      // return
-    }
-    // console.log('File written successfully!')
-  })
-})
-
 config.users.forEach((user) => {
   test(`@holdings [${user.name}] [@kcid${user.kcid}]`, async ({ kiteAPI }) => {
     let data = []
@@ -118,7 +109,7 @@ config.users.forEach((user) => {
     // Table Headerconsole.log(headerInfo().join('\n'))
 
     console.log(
-      `\nEquity Holdings [${user.name.toUpperCase()}] [kcid: ${user.kcid}] [capital: ${utils.formatIndianNumber(user.capital)}]`,
+      `\n${cyan}Equity Holdings [${user.name.toUpperCase()}] [kcid: ${user.kcid}] [capital: ${utils.formatIndianNumber(user.capital)}]${reset}`,
     )
 
     console.log(headerInfo().join('\n'))

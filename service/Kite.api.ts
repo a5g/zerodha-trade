@@ -262,6 +262,20 @@ export class KiteAPI extends API {
     // return orders.data.data.filter((order) => order.status === 'active')
   }
 
+  public async getGTTOrders(kcid: number) {
+    const request: any = {
+      url: `${config.apiHost}/oms/gtt/triggers`,
+      method: 'GET',
+      headers: {
+        Authorization: `enctoken ${cookies[kcid]}`,
+      },
+    }
+
+    const orders: any = await super.get(request)
+
+    return orders
+  }
+
   public async getOCOActiveOrders(tradingSymbol: string = '') {
     const request: any = {
       url: `${config.apiHost}/oms/gtt/triggers`,
