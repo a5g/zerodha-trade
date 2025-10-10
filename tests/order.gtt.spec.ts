@@ -139,15 +139,15 @@ test.describe(`GTT`, () => {
           data.sellPrice = order.sellPrice
           data.transactionType = 'SELL'
 
-          // await kiteAPI.placeGTT(data)
+          await kiteAPI.placeGTT(data)
           const d = { ...data }
           d.buyPrice = 0
           placedOrder.push(d)
-          fs.appendFileSync(
-            filePath,
-            `\n${printRow(d, (counter += 1))}`,
-            'utf8',
-          )
+          // fs.appendFileSync(
+          //   filePath,
+          //   `\n${printRow(d, (counter += 1))}`,
+          //   'utf8',
+          // )
         }
       }
     })

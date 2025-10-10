@@ -20,7 +20,8 @@ function headerInfo() {
     utils.pad('No.', 5) +
     utils.pad('Instrument', 15) +
     utils.pad('LTP', 10, true) +
-    utils.pad('Type', 10, true) +
+    utils.pad('', 5) +
+    utils.pad('Type', 10) +
     utils.pad('Qty', 10, true) +
     utils.pad('Buy Price', 15, true) +
     utils.pad('Sell Price', 15, true) +
@@ -38,7 +39,8 @@ function printRow(row: any, index) {
   const rowInfo =
     utils.pad(index + 1, 5) +
     utils.pad(row.tradingsymbol, 15) +
-    utils.pad(utils.formatIndianNumber(row.ltp, true), 10, true) +
+    utils.pad(utils.formatIndianNumber(row.lastPrice, true), 10, true) +
+    utils.pad('', 5) +
     utils.pad(row.buyPrice > 0 ? 'Buy' : 'Sell', 10) +
     utils.pad(utils.formatIndianNumber(row.qty), 10, true) +
     utils.pad(

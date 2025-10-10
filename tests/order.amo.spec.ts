@@ -42,19 +42,19 @@ function printRow(row: any, index) {
     utils.pad(row.buyPrice > 0 ? 'Buy' : 'Sell', 10, true) +
     utils.pad(utils.formatIndianNumber(row.quantity), 10, true) +
     utils.pad(
-      row.buyPrice === 0 ? '-' : utils.formatIndianNumber(row.buyPrice),
+      row.buyPrice === 0 ? '-' : utils.formatIndianNumber(row.buyPrice, true),
       15,
       true,
     ) +
     utils.pad(
-      row.sellPrice === 0 ? '-' : utils.formatIndianNumber(row.sellPrice),
+      row.sellPrice === 0 ? '-' : utils.formatIndianNumber(row.sellPrice, true),
       15,
       true,
     ) +
     utils.pad(
       row.buyPrice === 0
         ? '-'
-        : utils.formatIndianNumber(row.qty * row.buyPrice),
+        : utils.formatIndianNumber(row.quantity * row.buyPrice),
       15,
       true,
     ) +
@@ -96,7 +96,7 @@ test.describe(`AMO`, () => {
     }) => {
       let ltp = order.ltp
       if (ltp === 0)
-        ltp = await kite.getLTP(order.exchange, order.tradingSymbol)
+        ltp = await kite.getLTPFromTV(order.exchange, order.tradingSymbol)
 
       // buy
       const data = {
