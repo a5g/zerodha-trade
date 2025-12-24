@@ -88,7 +88,7 @@ test.describe(`ALERT`, () => {
 
   test.afterAll(() => {
     const arr = []
-    arr[0] = `\n\nAlerts for below instruments have been deleted for [${utils.kiteuser().name}] [kcid: ${utils.kiteuser().kcid}]`
+    arr[0] = `\n\nAlerts for below instruments have been created for [${utils.kiteuser().name}] [kcid: ${utils.kiteuser().kcid}]`
     arr[1] = '----------------------'
     arr[2] = utils.pad('No.', 5) + utils.pad('Instrument', 15)
     arr[3] = arr[1]

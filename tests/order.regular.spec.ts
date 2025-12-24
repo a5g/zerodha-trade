@@ -14,7 +14,7 @@ const DIVIDER =
 
 function headerInfo() {
   const arr = []
-  arr[0] = `\n\nRegular orders for below instruments have been deleted for [${utils.kiteuser().name}] [kcid: ${utils.kiteuser().kcid}] [capital: ${utils.kiteuser().capital.toLocaleString('en-IN')}]`
+  arr[0] = `\n\nRegular orders for below instruments have been created for [${utils.kiteuser().name}] [kcid: ${utils.kiteuser().kcid}] [capital: ${utils.kiteuser().capital.toLocaleString('en-IN')}]`
   arr[1] = DIVIDER
   arr[2] =
     utils.pad('No.', 5) +
