@@ -1,5 +1,8 @@
 import { APIRequestContext, expect } from '@playwright/test'
+import axios from 'axios'
+
 import config from '../config'
+// const axios = require('axios')
 
 // const Ajv = require('ajv')
 
@@ -70,56 +73,150 @@ export class API {
     return time > 1000 ? `${(time / 1000).toFixed(2)}s` : `${time}ms`
   }
 
+  public async axiosRequest(request: any) {
+    let response
+    try {
+      response = await axios.request(request)
+      // console.log(response.data)
+      return response
+      // Do something with the response
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error({
+          ...error.response.data,
+          status_code: error.status,
+          url: request.url,
+        })
+        // Do something with this error...
+      } else {
+        console.error(error)
+      }
+      throw error
+    }
+  }
+
   public async get(options: any) {
     // this.printcURL(options)
 
-    const start = new Date().getTime()
-    const response = await this.request.get(options.url, {
-      headers: options.headers,
-      data: options.data,
-    })
+    // const start = new Date().getTime()
+    // const response = await this.request.get(options.url, {
+    //   headers: options.headers,
+    //   data: options.data,
+    // })
 
-    return this.validation(start, response)
+    // return this.validation(start, response)
+
+    return this.axiosRequest(options)
+  }
+
+  public async getAxios(options: any) {
+    // this.printcURL(options)
+
+    // const start = new Date().getTime()
+    // const response = await axios.get(options.url, {
+    //   headers: options.headers,
+    // })
+
+    let response
+    try {
+      response = await axios.request(options)
+      // console.log(response.data)
+      return response.data
+      // Do something with the response
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error({
+          ...error.response.data,
+          status_code: error.status,
+          url: options.url,
+        })
+        // Do something with this error...
+      } else {
+        console.error(error)
+      }
+      throw error
+    }
+
+    // const cnfg = {
+    //   method: 'GET',
+    //   maxBodyLength: Infinity,
+    //   url: 'https://kite.zerodha.com/oms/gtt/triggers',
+    //   headers: {
+    //     authorization:
+    //       'enctoken K9dL0ijDkF6qIaKiTr0LxGGlJt16adneoK6N00wwyxP62011LiKFJegHWJcYKSAU+yRghTfvAkKqnzyGuPqTsR1lGNWoqyB2vUp8+pS+rGym3LXrFOn+SQ==',
+    //   },
+    // }
+
+    // axios.get
+    // return axios
+    //   .request(cnfg)
+    //   .then((res) => {
+    //     console.log(JSON.stringify(res.data))
+    //     expect(res).toBeTruthy()
+    //     return res.data
+    //   })
+    //   .catch((error) => {
+    //     console.log(error.response.data)
+    //   })
+
+    // return axios
+    //   .request(cnfg)
+    //   .then((response) => {
+    //     return response
+    //   })
+    //   .catch((error) => {
+    //     console.log(error.response.data)
+    //   })
+    // return response
+    // return this.validation(start, response)
   }
 
   public async post(request: any) {
-    const start = new Date().getTime()
-    const response = await this.request.post(request.url, {
-      headers: request.headers,
-      data: request.data,
-    })
+    // const start = new Date().getTime()
+    // const response = await this.request.post(request.url, {
+    //   headers: request.headers,
+    //   data: request.data,
+    // })
 
-    return this.validation(start, response)
+    // return this.validation(start, response)
+
+    return this.axiosRequest(request)
   }
 
   public async put(options: any) {
     // this.printcURL(options)
 
-    const start = new Date().getTime()
-    const response = await this.request.put(options.url, {
-      headers: options.headers,
-      data: options.data,
-    })
+    // const start = new Date().getTime()
+    // const response = await this.request.put(options.url, {
+    //   headers: options.headers,
+    //   data: options.data,
+    // })
 
-    return this.validation(start, response)
+    // return this.validation(start, response)
+
+    return this.axiosRequest(options)
   }
 
   public async delete(options: any) {
     // this.printcURL(options)
 
-    const start = new Date().getTime()
-    const response = await this.request.delete(options.url, {
-      headers: options.headers,
-      data: options.data,
-    })
+    // const start = new Date().getTime()
+    // const response = await this.request.delete(options.url, {
+    //   headers: options.headers,
+    //   data: options.data,
+    // })
 
-    return this.validation(start, response)
+    // return this.validation(start, response)
+
+    return this.axiosRequest(options)
   }
 
   public async validation(start: number, response: any) {
     const timeTaken = new Date().getTime() - start
 
     let data
+
+    console.log(response)
 
     try {
       data = await response.json()

@@ -4,9 +4,11 @@ import qs from 'qs'
 import { API } from './index'
 import config from '../config'
 import { utils } from '../utils/utils'
-// const qs = require('qs')
 
-const cookies = require('../.auth/cookies.json')
+const cookies = require('../cookies.json')
+
+const BUY_PRICE_INCREASE = 1.0025
+const SELL_PRICE_DECREASE = 0.9975
 
 export class KiteAPI extends API {
   request: APIRequestContext
@@ -44,13 +46,13 @@ export class KiteAPI extends API {
       order.transactionType === 'BUY' ? order.buyPrice : order.sellPrice
     const price =
       order.transactionType === 'BUY'
-        ? utils.zerodaPriceFormat(order.buyPrice * 1.005)
-        : utils.zerodaPriceFormat(order.sellPrice * 0.995)
+        ? utils.zerodaPriceFormat(order.buyPrice * BUY_PRICE_INCREASE)
+        : utils.zerodaPriceFormat(order.sellPrice * SELL_PRICE_DECREASE)
 
-    const LAST_PRICE = utils.zerodaPriceFormat(triggerPrice * 0.99)
+    // const LAST_PRICE = utils.zerodaPriceFormat(triggerPrice * 0.99)
 
     const data = qs.stringify({
-      condition: `{"exchange":"${order.exchange}","tradingsymbol":"${order.tradingSymbol}","trigger_values":[${triggerPrice}],"last_price":${order.lastPrice}}`,
+      condition: `{"exchange":"${order.exchange}","tradingsymbol":"${order.tradingSymbol}","trigger_values":[${triggerPrice}],"last_price":${order.ltp}}`,
       orders: `[{"exchange":"${order.exchange}","tradingsymbol":"${order.tradingSymbol}","transaction_type":"${order.transactionType}","quantity":${order.qty},"price":${price},"order_type":"LIMIT","product":"CNC"}]`,
       type: 'single',
       expires_at: this.getFutureDate(),
@@ -61,22 +63,22 @@ export class KiteAPI extends API {
 
   public getOCOOrderData(order: any) {
     const stoplossTriggerPrice = utils.zerodaPriceFormat(order.stoplossPrice)
-    const stoplossPrice = utils.zerodaPriceFormat(order.stoplossPrice * 0.995)
+    const stoplossPrice = utils.zerodaPriceFormat(
+      order.stoplossPrice * SELL_PRICE_DECREASE,
+    )
     const targetTriggerPrice = utils.zerodaPriceFormat(order.targetPrice)
-    const targetPrice = utils.zerodaPriceFormat(order.targetPrice * 0.995)
+    const targetPrice = utils.zerodaPriceFormat(
+      order.targetPrice * SELL_PRICE_DECREASE,
+    )
 
     const data = qs.stringify({
-      condition: `{"exchange":"${order.exchange}","tradingsymbol":"${order.tradingSymbol}","trigger_values":[${stoplossTriggerPrice}, ${targetTriggerPrice}],"last_price":${order.lastPrice}}`,
+      condition: `{"exchange":"${order.exchange}","tradingsymbol":"${order.tradingSymbol}","trigger_values":[${stoplossTriggerPrice}, ${targetTriggerPrice}],"last_price":${order.ltp}}`,
       orders: `[{"exchange":"${order.exchange}","tradingsymbol":"${order.tradingSymbol}","transaction_type":"${order.transactionType}","quantity":${order.qty},"price":${stoplossPrice},"order_type":"LIMIT","product":"CNC"},{"exchange":"${order.exchange}","tradingsymbol":"${order.tradingSymbol}","transaction_type":"${order.transactionType}","quantity":${order.qty},"price":${targetPrice},"order_type":"LIMIT","product":"CNC"}]`,
       type: 'two-leg',
       expires_at: this.getFutureDate(),
     })
 
     return data
-
-    // {"exchange":"NSE","tradingsymbol":"IXIGO","trigger_values":[249.9,319.35],"last_price":277.7}
-    // [{"exchange":"NSE","tradingsymbol":"IXIGO","transaction_type":"SELL","quantity":1,"price":263.8,"order_type":"LIMIT","product":"CNC"},{"exchange":"NSE","tradingsymbol":"IXIGO","transaction_type":"SELL","quantity":1,"price":291.55,"order_type":"LIMIT","product":"CNC"}]
-    // two-leg
   }
 
   public async getLTP({ exchange, tradingsymbol }) {
@@ -85,7 +87,7 @@ export class KiteAPI extends API {
       method: 'GET',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        Authorization: `enctoken ${cookies[utils.kiteuser().id]}`,
+        Authorization: `enctoken ${cookies[utils.kiteuser().kcid]}`,
       },
     }
 
@@ -99,7 +101,7 @@ export class KiteAPI extends API {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        Authorization: `enctoken ${cookies[utils.kiteuser().id]}`,
+        Authorization: `enctoken ${cookies[utils.kiteuser().kcid]}`,
       },
       data,
     }
@@ -114,7 +116,7 @@ export class KiteAPI extends API {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        Authorization: `enctoken ${cookies[utils.kiteuser().id]}`,
+        Authorization: `enctoken ${cookies[utils.kiteuser().kcid]}`,
       },
       data,
     }
@@ -129,7 +131,7 @@ export class KiteAPI extends API {
       tradingsymbol: payload.tradingsymbol,
       transaction_type: payload.transaction_type,
       order_type: payload.order_type,
-      quantity: payload.quantity,
+      quantity: payload.qty,
       price: utils.zerodaPriceFormat(payload.price),
       product: 'CNC',
       validity: 'DAY',
@@ -146,7 +148,7 @@ export class KiteAPI extends API {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        Authorization: `enctoken ${cookies[utils.kiteuser().id]}`,
+        Authorization: `enctoken ${cookies[utils.kiteuser().kcid]}`,
       },
       data,
     }
@@ -179,7 +181,7 @@ export class KiteAPI extends API {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        Authorization: `enctoken ${cookies[utils.kiteuser().id]}`,
+        Authorization: `enctoken ${cookies[utils.kiteuser().kcid]}`,
       },
       data,
     }
@@ -192,7 +194,7 @@ export class KiteAPI extends API {
       url: `${config.apiHost}/oms/orders`,
       method: 'GET',
       headers: {
-        Authorization: `enctoken ${cookies[utils.kiteuser().id]}`,
+        Authorization: `enctoken ${cookies[utils.kiteuser().kcid]}`,
       },
     }
 
@@ -215,7 +217,7 @@ export class KiteAPI extends API {
       url: `${config.apiHost}/oms/orders`,
       method: 'GET',
       headers: {
-        Authorization: `enctoken ${cookies[utils.kiteuser().id]}`,
+        Authorization: `enctoken ${cookies[utils.kiteuser().kcid]}`,
       },
     }
 
@@ -240,7 +242,7 @@ export class KiteAPI extends API {
       url: `${config.apiHost}/oms/gtt/triggers`,
       method: 'GET',
       headers: {
-        Authorization: `enctoken ${cookies[utils.kiteuser().id]}`,
+        Authorization: `enctoken ${cookies[utils.kiteuser().kcid]}`,
       },
     }
 
@@ -260,12 +262,26 @@ export class KiteAPI extends API {
     // return orders.data.data.filter((order) => order.status === 'active')
   }
 
+  public async getGTTOrders(kcid: number) {
+    const request: any = {
+      url: `${config.apiHost}/oms/gtt/triggers`,
+      method: 'GET',
+      headers: {
+        Authorization: `enctoken ${cookies[kcid]}`,
+      },
+    }
+
+    const orders: any = await super.get(request)
+
+    return orders
+  }
+
   public async getOCOActiveOrders(tradingSymbol: string = '') {
     const request: any = {
       url: `${config.apiHost}/oms/gtt/triggers`,
       method: 'GET',
       headers: {
-        Authorization: `enctoken ${cookies[utils.kiteuser().id]}`,
+        Authorization: `enctoken ${cookies[utils.kiteuser().kcid]}`,
       },
     }
 
@@ -290,7 +306,7 @@ export class KiteAPI extends API {
       url: `${config.apiHost}/oms/gtt/triggers/${id}`,
       method: 'DELETE',
       headers: {
-        Authorization: `enctoken ${cookies[utils.kiteuser().id]}`,
+        Authorization: `enctoken ${cookies[utils.kiteuser().kcid]}`,
       },
     }
 
@@ -302,7 +318,7 @@ export class KiteAPI extends API {
       url: `${config.apiHost}/oms/orders/regular/${id}?order_id=${id}&parent_order_id=&variety=regular`,
       method: 'DELETE',
       headers: {
-        Authorization: `enctoken ${cookies[utils.kiteuser().id]}`,
+        Authorization: `enctoken ${cookies[utils.kiteuser().kcid]}`,
       },
     }
 
@@ -314,7 +330,88 @@ export class KiteAPI extends API {
       url: `${config.apiHost}/oms/orders/amo/${id}?order_id=${id}&parent_order_id=&variety=regular`,
       method: 'DELETE',
       headers: {
-        Authorization: `enctoken ${cookies[utils.kiteuser().id]}`,
+        Authorization: `enctoken ${cookies[utils.kiteuser().kcid]}`,
+      },
+    }
+
+    return super.delete(request)
+  }
+
+  public async getHoldings(id: number = 1) {
+    const request: any = {
+      url: `${config.apiHost}/oms/portfolio/holdings`,
+      method: 'GET',
+      headers: {
+        Authorization: `enctoken ${cookies[id]}`,
+      },
+    }
+
+    return super.get(request)
+  }
+
+  public async getPositions(id: number = 1) {
+    const request: any = {
+      url: `${config.apiHost}/oms/portfolio/positions`,
+      method: 'GET',
+      headers: {
+        Authorization: `enctoken ${cookies[id]}`,
+      },
+    }
+
+    return super.get(request)
+  }
+
+  public async placeAlert(order: any) {
+    const data = qs.stringify({
+      name: order.tradingSymbol,
+      lhs_exchange: order.exchange,
+      lhs_tradingsymbol: order.tradingSymbol,
+      lhs_attribute: 'LastTradedPrice',
+      operator: order.operator,
+      rhs_type: 'constant',
+      type: 'simple',
+      rhs_constant: order.alertPrice,
+    })
+
+    const request: any = {
+      url: `${config.apiHost}/oms/alerts`,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization: `enctoken ${cookies[utils.kiteuser().kcid]}`,
+      },
+      data,
+    }
+
+    return super.post(request)
+  }
+
+  public async getActiveAlerts(tradingSymbol: string = '') {
+    const request: any = {
+      url: `${config.apiHost}/oms/alerts`,
+      method: 'GET',
+      headers: {
+        Authorization: `enctoken ${cookies[utils.kiteuser().kcid]}`,
+      },
+    }
+
+    const alerts: any = await super.get(request)
+
+    if (tradingSymbol !== '') {
+      return alerts.data.data.filter(
+        (alert) => alert.lhs_tradingsymbol === tradingSymbol,
+      )
+    }
+
+    return []
+  }
+
+  public async cancelAlert(uuid: number) {
+    const request: any = {
+      url: `${config.apiHost}/oms/alerts?uuid=${uuid}`,
+      method: 'DELETE',
+      headers: {
+        Authorization: `enctoken ${cookies[utils.kiteuser().kcid]}`,
       },
     }
 

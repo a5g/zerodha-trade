@@ -1,20 +1,12 @@
 import { test } from '../fixtures/auto.test'
-import orders from '../data/order'
+// import orders from '../data/order'
 import config from '../config'
 
 const ACTIVE_USER = 1
-
-const KITE_USER = config.users.filter((user) => user.id === ACTIVE_USER)[0]
-
-//   1: 'anand',
-//   2: 'swetha',
-//   3: 'gayithri',
-//   4: 'savitha',
-//   5: 'veda',
-//   6: 'divesh',
+const orders = []
+const KITE_USER = config.users.filter((user) => user.kcid === ACTIVE_USER)[0]
 
 test.use({ storageState: `.auth/${KITE_USER.name}.json` })
-
 test.describe(`${KITE_USER.name} => `, () => {
   test(`navigate => holdings @navigate`, async ({ kite }) => {
     await kite.gotoHoldingsPage()

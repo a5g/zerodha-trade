@@ -3,7 +3,7 @@ import { test } from '../fixtures/auto.test'
 test(`Pull order data from local excel file`, async ({ utils }) => {
   // from local file
   const tdata = utils
-    .readDataFromXLSX('./data/trade-data-api.xlsx', 'OCO')
+    .readDataFromXLSX('./data/trade-data-api.xlsx', 'ALERT')
     .filter((row) => row.trading_symbol !== undefined)
 
   const parsedData = tdata
@@ -12,20 +12,14 @@ test(`Pull order data from local excel file`, async ({ utils }) => {
       tradingSymbol: utils.isEmpty(item.trading_symbol)
         ? ''
         : item.trading_symbol,
+      alertPrice: utils.isEmpty(item.alert_price)
+        ? 0
+        : utils.formatFloat(item.alert_price),
+      condition: utils.isEmpty(item.condition) ? '' : item.condition,
       ltp:
         item.ltp === '' || item.ltp === null || item.ltp === undefined
           ? 0
-          : utils.formatIndianNumber(item.ltp),
-      qty: utils.isEmpty(item.qty) ? 0 : parseInt(item.qty, 10),
-      buyPrice: utils.isEmpty(item.buy_price)
-        ? 0
-        : utils.formatFloat(item.buy_price),
-      stoplossPrice: utils.isEmpty(item.stoploss_price)
-        ? 0
-        : utils.formatFloat(item.stoploss_price),
-      targetPrice: utils.isEmpty(item.target_price)
-        ? 0
-        : utils.formatFloat(item.target_price),
+          : parseFloat(item.ltp),
     }))
     .filter((row) => row.tradingSymbol.trim() !== '')
 

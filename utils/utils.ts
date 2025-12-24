@@ -7,16 +7,8 @@ const XLSX = require('xlsx')
 
 export class Utils {
   public kiteuser(id: number = config.kcid) {
-    return config.users.filter((u) => u.id === id)[0]
+    return config.users.filter((u) => u.kcid === id)[0]
   }
-
-  public getUserObjectById(id: number = config.kcid) {
-    return config.users.filter((x) => x.id === id)[0]
-  }
-
-  // public getUserObjectByName(name: string = config.kcname) {
-  //   return config.users.filter((u) => u.name === name)[0]
-  // }
 
   public indNumber(value: number) {
     return value.toLocaleString('en-IN')
@@ -26,22 +18,11 @@ export class Utils {
     const workbook = XLSX.readFile(filePath)
 
     return XLSX.utils.sheet_to_json(workbook.Sheets[sheetName])
-
-    // const sheetNameList = workbook.SheetNames
-    // const xldata: any[] = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName])
-    // return xlData.filter((data) => data.trading_symbol !== undefined)
   }
 
   public isEmpty(value) {
     return value === undefined || value === null || value === ''
   }
-
-  // public pad(str, length) {
-  //   str = String(str)
-  //   return str.length >= length
-  //     ? str.slice(0, length)
-  //     : str + ' '.repeat(length - str.length)
-  // }
 
   public pad(str, length, alignRight = false) {
     str = String(str)
@@ -165,9 +146,6 @@ export class Utils {
   }
 
   sortByBuyDate(a, b) {
-    // const c = this.convertToDate(a.buyDate)
-    // const d = this.convertToDate(b.buyDate)
-
     let m = a.buyDate.split('-')
     const c = new Date(m[1] + '/' + m[0] + '/' + m[2])
 
@@ -270,25 +248,51 @@ export class Utils {
     return parseFloat(cagrPercentage)
   }
 
-  formatIndianNumber(number) {
-    // Convert the number to a string
-    const numberString = number.toString()
+  formatIndianNumber(
+    value: number | string,
+    printDecimal: boolean = false,
+    fractionDigits: number = 2,
+    rounding: 'round' | 'floor' | 'ceil' = 'round',
+  ): string {
+    if (value === null || value === undefined || value === '') {
+      return printDecimal ? `0.${'0'.repeat(fractionDigits)}` : '0'
+    }
 
-    // Split the number into integer and decimal parts
-    const [integerPart, decimalPart] = numberString.split('.')
+    // Accept strings like "3,05,369" too
+    const num =
+      typeof value === 'number'
+        ? value
+        : Number(String(value).replace(/,/g, ''))
+    if (Number.isNaN(num)) return String(value)
 
-    // Format the integer part with commas for lakh and crore separators
-    const formattedIntegerPart = integerPart.replace(
-      /\B(?=(\d{3})+(?!\d))/g,
-      ',',
-    )
+    const sign = num < 0 ? '-' : ''
+    const abs = Math.abs(num)
 
-    // Combine the formatted integer part and the decimal part
-    const formattedNumber = decimalPart
-      ? `${formattedIntegerPart}.${decimalPart}`
-      : formattedIntegerPart
+    // Fix decimals with chosen rounding
+    const factor = Math.pow(10, fractionDigits)
+    let fixed: string
+    if (printDecimal) {
+      const scaled =
+        rounding === 'floor'
+          ? Math.floor(abs * factor)
+          : rounding === 'ceil'
+            ? Math.ceil(abs * factor)
+            : Math.round(abs * factor)
+      fixed = (scaled / factor).toFixed(fractionDigits) // keeps trailing zeros
+    } else {
+      fixed = Math.trunc(abs).toString()
+    }
 
-    return formattedNumber
+    let [intPart, decPart = ''] = fixed.split('.')
+
+    // Indian grouping: last 3 digits, then groups of 2
+    if (intPart.length > 3) {
+      const last3 = intPart.slice(-3)
+      const rest = intPart.slice(0, -3)
+      intPart = rest.replace(/\B(?=(\d{2})+(?!\d))/g, ',') + ',' + last3
+    }
+
+    return sign + intPart + (printDecimal ? '.' + decPart : '')
   }
 
   async readCSVData(myCSVFilePath: string): Promise<any> {
@@ -324,7 +328,7 @@ export class Utils {
 
   public zerodaPriceFormat(price: number) {
     // Round to nearest multiple of 0.05
-    let rounded = Math.round(price / 0.05) * 0.05
+    const rounded = Math.round(price / 0.05) * 0.05
 
     // Fix to 2 decimals
     return rounded.toFixed(2)

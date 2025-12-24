@@ -1,12 +1,12 @@
 // import fs from 'fs'
-import { Page, expect } from '@playwright/test'
+import { expect, Page } from '@playwright/test'
 import config from '../config'
 
 const XLSX = require('xlsx')
 const fs = require('fs')
-const file = require('../.auth/cookies.json')
+const file = require('../cookies.json')
 
-const fileName = '../.auth/cookies.json'
+// const fileName = '../cookies.json'
 // const csv = require('csv-parser')
 
 export default class KitePage {
@@ -144,13 +144,9 @@ export default class KitePage {
 
     file[name] = enctoken
 
-    fs.writeFile(
-      '.auth/cookies.json',
-      JSON.stringify(file),
-      function writeJSON(err) {
-        if (err) return console.log(err)
-      },
-    )
+    fs.writeFile('cookies.json', JSON.stringify(file), function writeJSON(err) {
+      if (err) return console.log(err)
+    })
   }
 
   public async gotoKite(path: string = '/') {
@@ -162,7 +158,8 @@ export default class KitePage {
     try {
       await this.riskDialogIUnderstandButton.click({ timeout: 100 })
     } catch (e) {
-      console.log('Could not find investor risk dialog')
+      await this.page.mouse.click(200, 300)
+      // console.log('Could not find investor risk dialog')
     }
   }
 
@@ -213,8 +210,7 @@ export default class KitePage {
 
   public async getLTP(exchange, tradingSymbol) {
     await this.page.goto(`${config.baseURL}`)
-    // await this.page.getByRole('tab', { name: '7' }).click()
-
+    await this.acceptRisk()
     await this.searchText.fill(tradingSymbol)
     await this.searchResultsFirstItem.hover()
     await this.buyBtn.click()
@@ -233,6 +229,20 @@ export default class KitePage {
     ltp = ltp.substring(1, ltp.length).replace(/,/, '')
 
     return ltp
+  }
+
+  public async getLTPFromTV(exchange, tradingSymbol) {
+    await this.page.goto(
+      `https://in.tradingview.com/symbols/NSE-${tradingSymbol}/`,
+    )
+
+    const ltp = this.page.locator(
+      `//div[contains(@class, "quotesRow")]//span[contains(@class, "js-symbol-last")]`,
+    )
+    await expect(ltp).toContainText('.')
+    const txt = await ltp.textContent()
+
+    return txt.replace(/,/, '')
   }
 
   public async regularOrder(
@@ -315,10 +325,6 @@ export default class KitePage {
     await this.page.waitForTimeout(500)
     await this.page.getByRole('button', { name: 'Place' }).click()
     await this.page.waitForTimeout(1000)
-
-    // await this.page.screenshot({
-    //   path: `screenshots/gtt-${type.toLowerCase()}-/${stock}.png`,
-    // })
   }
 
   public async pause() {

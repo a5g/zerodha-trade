@@ -9,23 +9,25 @@ let counter = -1
 
 const placedOrder = []
 
+const DIVIDER =
+  '---------------------------------------------------------------------------------------------------------------'
+
 function headerInfo() {
   const arr = []
-  arr[0] = `\n\nBelow AMO orders have been executed for [${utils.kiteuser().name}] [capital: ${utils.kiteuser().capital.toLocaleString('en-IN')}]`
-  arr[1] =
-    '------------------------------------------------------------------------------------------------'
+  arr[0] = `\n\nBelow AMO orders have been created for [${utils.kiteuser().name}] [kcid: ${utils.kiteuser().kcid}] [capital: ${utils.kiteuser().capital.toLocaleString('en-IN')}]`
+  arr[1] = DIVIDER
   arr[2] =
     utils.pad('No.', 5) +
-    utils.pad('Stock', 15) +
-    utils.pad('Type', 4) +
-    utils.pad('Qty', 12, true) +
-    utils.pad('Buy Price', 14, true) +
-    utils.pad('Sell Price', 14, true) +
+    utils.pad('Instrument', 15) +
+    utils.pad('LTP', 10, true) +
+    utils.pad('Type', 10, true) +
+    utils.pad('Qty', 10, true) +
+    utils.pad('Buy Price', 15, true) +
+    utils.pad('Sell Price', 15, true) +
     utils.pad('Invested', 15, true) +
-    utils.pad('Position', 14, true)
+    utils.pad('Position', 15, true)
 
-  arr[3] =
-    '------------------------------------------------------------------------------------------------'
+  arr[3] = DIVIDER
 
   return arr
 }
@@ -36,18 +38,27 @@ function printRow(row: any, index) {
   const rowInfo =
     utils.pad(index + 1, 5) +
     utils.pad(row.tradingsymbol, 15) +
-    utils.pad(row.buyPrice > 0 ? 'Buy' : 'Sell', 4) +
-    utils.pad(row.quantity, 12, true) +
-    utils.pad(row.buyPrice === 0 ? '-' : row.buyPrice, 14, true) +
-    utils.pad(row.sellPrice === 0 ? '-' : row.sellPrice, 14, true) +
+    utils.pad(utils.formatIndianNumber(row.ltp, true), 10, true) +
+    utils.pad(row.buyPrice > 0 ? 'Buy' : 'Sell', 10, true) +
+    utils.pad(utils.formatIndianNumber(row.quantity), 10, true) +
     utils.pad(
-      row.buyPrice === 0
-        ? '-'
-        : (row.quantity * row.price).toLocaleString('en-IN'),
+      row.buyPrice === 0 ? '-' : utils.formatIndianNumber(row.buyPrice, true),
       15,
       true,
     ) +
-    utils.pad(`${pos}`, 14, true)
+    utils.pad(
+      row.sellPrice === 0 ? '-' : utils.formatIndianNumber(row.sellPrice, true),
+      15,
+      true,
+    ) +
+    utils.pad(
+      row.buyPrice === 0
+        ? '-'
+        : utils.formatIndianNumber(row.quantity * row.buyPrice),
+      15,
+      true,
+    ) +
+    utils.pad(`${pos}`, 15, true)
 
   return rowInfo
 }
@@ -62,16 +73,7 @@ test('Delete summary.txt content', () => {
   })
 })
 
-test.describe(`Regular Order`, () => {
-  test.beforeAll(() => {
-    fs.writeFile(filePath, headerInfo().join(`\n`), 'utf8', (err) => {
-      if (err) {
-        console.error('Error writing file:', err)
-      }
-      // console.log('File written successfully!')
-    })
-  })
-
+test.describe(`AMO`, () => {
   test.afterAll(() => {
     // print the final summary
     // Table Header
@@ -82,27 +84,27 @@ test.describe(`Regular Order`, () => {
       console.log(printRow(row, index))
     })
 
-    console.log(
-      '------------------------------------------------------------------------------------------------',
-    )
-    fs.appendFileSync(
-      filePath,
-      `\n------------------------------------------------------------------------------------------------`,
-      'utf8',
-    )
+    console.log(DIVIDER)
+    fs.appendFileSync(filePath, `\n${DIVIDER}`, 'utf8')
   })
 
   orders.forEach((order, index) => {
+    // test.use({ storageState: `.auth/${utils.kiteuser().kcid}.json` })
     test(`@amo_order ${order.tradingSymbol} [${index + 1}]`, async ({
       kiteAPI,
+      kite,
     }) => {
+      let ltp = order.ltp
+      if (ltp === 0)
+        ltp = await kite.getLTPFromTV(order.exchange, order.tradingSymbol)
+
       // buy
       const data = {
         user: utils.kiteuser().name,
-        userid: utils.kiteuser().id,
+        userid: utils.kiteuser().kcid,
         exchange: order.exchange,
         tradingsymbol: order.tradingSymbol,
-        lastPrice: order.ltp,
+        ltp,
         quantity: order.qty,
         price: 0,
         buyPrice: order.buyPrice,
@@ -153,16 +155,43 @@ test.describe(`Regular Order`, () => {
   })
 })
 
-test.describe(`AMO Cancel`, () => {
-  orders.forEach((order, index) => {
-    test(`@amo_cancel [${order.tradingSymbol}] [${index}]`, async ({
-      kiteAPI,
-    }) => {
-      const openOrders = await kiteAPI.getAMOOpenOrders(order.tradingSymbol)
+test.describe(`AMO`, () => {
+  const symbols = []
 
-      for (const order of openOrders) {
-        await kiteAPI.cancelAMOOrder(order.order_id)
-      }
+  test.afterAll(() => {
+    const arr = []
+    arr[0] = `\n\nAMO Orders for below instruments have been created for [${utils.kiteuser().name}] [kcid: ${utils.kiteuser().kcid}]`
+    arr[1] = '----------------------'
+    arr[2] = utils.pad('No.', 5) + utils.pad('Instrument', 15)
+    arr[3] = '----------------------'
+
+    // print the final summary
+    // Table Header
+    console.log(arr.join('\n'))
+
+    // Table Rows
+    symbols.forEach((symbol, index) => {
+      console.log(utils.pad(index + 1, 5) + utils.pad(symbol, 15))
     })
+
+    console.log(arr[1])
   })
+
+  orders
+    .filter(
+      (item, index, self) =>
+        index === self.findIndex((t) => t.tradingSymbol === item.tradingSymbol),
+    )
+    .forEach((order, index) => {
+      test(`@amo_cancel [${order.tradingSymbol}] [${index + 1}]`, async ({
+        kiteAPI,
+      }) => {
+        const openOrders = await kiteAPI.getAMOOpenOrders(order.tradingSymbol)
+        symbols.push(order.tradingSymbol)
+
+        for (const order of openOrders) {
+          await kiteAPI.cancelAMOOrder(order.order_id)
+        }
+      })
+    })
 })
